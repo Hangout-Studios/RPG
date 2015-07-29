@@ -10,8 +10,12 @@ public class GuildBonus {
 		this.type = type;
 	}
 	
-	public void activate(DateTime until, boolean commitToDatabase){
+	public void activate(Guild g, DateTime until, boolean commitToDatabase) {
 		expireTime = until;
+		
+		if(commitToDatabase){
+			GuildManager.executeGuildBonusAction(g, "ENABLE", this);
+		}
 	}
 	
 	public GuildBonusType getType(){

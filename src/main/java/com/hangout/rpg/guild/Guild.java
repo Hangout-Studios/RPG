@@ -1,8 +1,12 @@
 package com.hangout.rpg.guild;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import mkremins.fanciful.FancyMessage;
+
+import org.bukkit.ChatColor;
 import org.joda.time.DateTime;
 
 import com.hangout.rpg.player.RpgPlayer;
@@ -52,6 +56,7 @@ public class Guild {
 		return players;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void addPlayer(RpgPlayer executor, RpgPlayer p, boolean commitToDatabase){
 		if(!players.contains(p)){
 			if(players.size() >= sizeLimit){
@@ -62,16 +67,42 @@ public class Guild {
 			p.setGuild(this);
 			
 			if(commitToDatabase){
+				for(RpgPlayer guildie : players){
+					if(guildie.getHangoutPlayer().isOnline()){
+						HashMap<String, Object> nameConfig =  p.getHangoutPlayer().getClickableNameConfig(guildie.getHangoutPlayer());
+						new FancyMessage("Please welcome ")
+						.then((String)nameConfig.get("text"))
+							.color((ChatColor)nameConfig.get("color"))
+							.style((ChatColor[])nameConfig.get("styles"))
+							.command((String)nameConfig.get("command"))
+							.tooltip((List<String>)nameConfig.get("tooltip"))
+						.then(" to the guild!")
+						.send(guildie.getHangoutPlayer().getPlayer());
+					}
+				}
+			
 				GuildManager.executeGuildMemberAction(this, p.getHangoutPlayer().getUUID(), executor.getHangoutPlayer().getUUID(), "ADD_PLAYER");
 			}
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void removePlayer(RpgPlayer executor, RpgPlayer p, boolean commitToDatabase){
 		if(players.contains(p)){
 			players.remove(p);
 			
 			p.setGuild(null);
+			
+			HashMap<String, Object> nameConfig =  executor.getHangoutPlayer().getClickableNameConfig(executor.getHangoutPlayer());
+			
+			p.getHangoutPlayer().getPlayer().sendMessage("You have been removed from the guild by ");
+			new FancyMessage("You have been removed from the guild by ")
+				.then((String)nameConfig.get("text"))
+					.color((ChatColor)nameConfig.get("color"))
+					.style((ChatColor[])nameConfig.get("styles"))
+					.command((String)nameConfig.get("command"))
+					.tooltip((List<String>)nameConfig.get("tooltip"))
+				.send(p.getHangoutPlayer().getPlayer());
 			
 			if(commitToDatabase){
 				GuildManager.executeGuildMemberAction(this, p.getHangoutPlayer().getUUID(), executor.getHangoutPlayer().getUUID(), "REMOVE_PLAYER");
@@ -112,8 +143,7 @@ public class Guild {
 		if(b == null){
 			p.getHangoutPlayer().getPlayer().sendMessage("You don't have a bonus of this type.");
 		}else{
-			b.activate(DateTime.now().plusDays(1), true);
-			GuildManager.executeGuildBonusAction(this, "ENABLE", b);
+			b.activate(this, DateTime.now().plusDays(1), true);
 			p.getHangoutPlayer().getPlayer().sendMessage(type.getDisplayName() + " succesfully activated!");
 		}
 	}
@@ -129,6 +159,10 @@ public class Guild {
 	}
 	
 	public boolean hasBonusActive(GuildBonusType type){
+		if(type.isPermanent() && getLevel() >= type.getRequiredLevel()){
+			return true;
+		}
+		
 		for(GuildBonus bonus : bonusses){
 			if(bonus.getType() == type){
 				if(bonus.isActive()){

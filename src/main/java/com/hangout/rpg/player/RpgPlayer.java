@@ -65,10 +65,17 @@ public class RpgPlayer {
 	
 	public void setGuild(Guild g){
 		this.guild = g;
+		
+		HangoutAPI.sendDebugMessage("Added player " + getHangoutPlayer().getName() + " to guild " + g.getName());
+		updateDescription();
 	}
 	
 	public Guild getGuild(){
 		return guild;
+	}
+	
+	public boolean isInGuild(){
+		return guild == null;
 	}
 	
 	public PlayerOccupations getOccupation(){

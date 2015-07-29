@@ -21,53 +21,72 @@ import com.hangout.rpg.player.RpgPlayerManager;
 
 public class GuildManager {
 	
-	public HashMap<String, Guild> guilds = new HashMap<String, Guild>();
+	public static HashMap<Integer, Guild> guilds = new HashMap<Integer, Guild>();
+	private static int nextID = 0;
+	
+	public static Guild getGuild(int id){
+		if(guilds.containsKey(id)){
+			return guilds.get(id);
+		}
+		return null;
+	}
 	
 	public static void createGuild(String name, String tag, RpgPlayer p){
-		Guild g = new Guild(-1, name, tag);
-		g.addPlayer(p, p, true);
+		Guild g = new Guild(nextID, name, tag);
 		executeGuildUpdate(g, true);
+		g.addPlayer(p, p, true);
+		guilds.put(g.getID(), g);
+		nextID++;
 	}
 	
 	public static void loadGuilds(){
 		
-		Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), new Runnable(){
-			@Override
-			public void run() {
-				
-				//Load all guilds
-				try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
-						"SELECT id, guild_name, guild_tag FROM " + Config.databaseName + ".guild WHERE is_active = 1;")) {
-					ResultSet rs = pst.executeQuery();
-					
-					while(rs.next()){
-						int id = rs.getInt("id");
-						String name = rs.getString("guild_name");
-						String tag = rs.getString("guild_tag");
-						
-						Guild g = new Guild(id, name, tag);
-						loadGuild(g);
-					}
-
-					pst.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				
+		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+				"SELECT id FROM " + Config.databaseName + ".guild ORDER BY id DESC LIMIT 1")) {
+			ResultSet rs = pst.executeQuery();
+			
+			if(rs.first()){
+				nextID = rs.getInt("id") + 1;
 			}
-		});		
+			
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
+		//Load all guilds
+		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+				"SELECT id, guild_name, guild_tag FROM " + Config.databaseName + ".guild WHERE is_active = 1;")) {
+			ResultSet rs = pst.executeQuery();
+
+			while(rs.next()){
+				int id = rs.getInt("id");
+				String name = rs.getString("guild_name");
+				String tag = rs.getString("guild_tag");
+
+				Guild g = new Guild(id, name, tag);
+				loadGuild(g);
+				guilds.put(g.getID(), g);
+			}
+
+			pst.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	
 	}
 	
 	private static void loadGuild(final Guild g){
 		HangoutAPI.sendDebugMessage("Loading guild: " + g.getName());
 		
+		int memberCount = 0;
+		
 		//Players
 		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
 				"SELECT guildmember_action.player_member AS 'player_member', guildmember_action.action AS 'action', players.name AS 'member_name' "
 				+ "FROM " + Config.databaseName + ".guildmember_action, " + Config.databaseName + ".players "
-				+ "WHERE guildmember_action.guild_name = ? AND players.uuid = guildmember_action.player_member "
+				+ "WHERE guildmember_action.guild_id = ? AND players.uuid = guildmember_action.player_member "
 				+ "ORDER BY guildmember_action.action_id ASC;")) {
-			pst.setString(1, g.getName());
+			pst.setInt(1, g.getID());
 			ResultSet rs = pst.executeQuery();
 			
 			HashMap<UUID, String> currentMembers = new HashMap<UUID, String>();
@@ -85,23 +104,29 @@ public class GuildManager {
 			pst.close();
 			
 			for(final UUID id : currentMembers.keySet()){
-				HangoutPlayer p = HangoutAPI.getPlayer(id);
-				if(p == null){
-					Database.loadPlayer(id, currentMembers.get(id));
-				}
-				
+				final String playerName = currentMembers.get(id);
 				Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), new Runnable(){
 					@Override
 					public void run() {
+						HangoutPlayer p = HangoutAPI.getPlayer(id);
+						if(p == null){
+							p = Database.loadPlayer(id, playerName);
+						}
+				
 						while(true){
-							RpgPlayer rpgP = RpgPlayerManager.getPlayer(id);
-							if(rpgP != null){
-								g.addPlayer(rpgP, rpgP, false);
+							if(p != null && p.isReadyLoading()){
+								RpgPlayer rpgP = RpgPlayerManager.getPlayer(id);
+								if(rpgP != null){
+									g.addPlayer(rpgP, rpgP, false);
+									break;
+								}
 							}
 						}
 					}
 				});
 			}
+			
+			memberCount = currentMembers.size();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -160,7 +185,7 @@ public class GuildManager {
 				for(GuildBonusType t : toActivate.keySet()){
 					for(GuildBonus b : list){
 						if(b.getType() == t){
-							b.activate(toActivate.get(t), false);
+							b.activate(g, toActivate.get(t), false);
 							break;
 						}
 					}
@@ -170,27 +195,7 @@ public class GuildManager {
 			e.printStackTrace();
 		}
 		
-		HangoutAPI.sendDebugMessage("Loading complete: " + g.getMembers().size() + " members");
-	}
-	
-	public static void setGuildID(final Guild g){
-		Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), new Runnable(){
-
-			@Override
-			public void run() {
-				try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
-						"SELECT id FROM " + Config.databaseName + ".guild WHERE guild_name = '" + g.getName() + "'")){
-					ResultSet rs = pst.executeQuery();
-					
-					if(rs.first()){
-						g.setID(rs.getInt("id"));
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			
-		});
+		HangoutAPI.sendDebugMessage("Loading complete: " + memberCount + " members");
 	}
 	
 	public static void executeGuildMemberAction(Guild g, UUID playerMember, UUID playerAction, String action){
@@ -208,9 +213,9 @@ public class GuildManager {
 	public static void executeGuildUpdate(Guild g, boolean active){
 		HashMap<String, Object> primary = new HashMap<String, Object>();
     	HashMap<String, Object> secondary = new HashMap<String, Object>();
-    	
-    	secondary.put("guild_id", g.getID());
+  
     	secondary.put("guild_name", g.getName());
+    	secondary.put("guild_tag", g.getTag());
     	secondary.put("is_active", active);
     	
     	Database.saveToDatabase("guild", primary, secondary);
