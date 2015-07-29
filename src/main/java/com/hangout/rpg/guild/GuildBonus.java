@@ -10,8 +10,8 @@ public class GuildBonus {
 		this.type = type;
 	}
 	
-	public void activate(){
-		expireTime = DateTime.now().plusDays(1);
+	public void activate(DateTime until, boolean commitToDatabase){
+		expireTime = until;
 	}
 	
 	public GuildBonusType getType(){

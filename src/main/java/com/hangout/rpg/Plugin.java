@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.hangout.core.HangoutAPI;
 import com.hangout.core.utils.database.Database.PropertyTypes;
 import com.hangout.core.utils.lang.MessageManager;
+import com.hangout.rpg.commands.GuildCommand;
 import com.hangout.rpg.guild.GuildManager;
 import com.hangout.rpg.listeners.ChatListener;
 import com.hangout.rpg.listeners.MenuListener;
@@ -32,6 +33,8 @@ public class Plugin extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		this.getServer().getPluginManager().registerEvents(new MenuListener(), this);
 		this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
+		
+		this.getCommand("guild").setExecutor(new GuildCommand());
 		
 		HangoutAPI.addCustomPlayerProperty("race", PropertyTypes.STRING);
 		

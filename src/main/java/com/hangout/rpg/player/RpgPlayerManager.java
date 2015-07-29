@@ -1,6 +1,7 @@
 package com.hangout.rpg.player;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.UUID;
@@ -68,5 +69,49 @@ public class RpgPlayerManager {
 				}
 			}
 		});
+	}
+	
+	public static void loadOccupation(final RpgPlayer p){
+		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+                "SELECT occupation FROM " + Config.databaseName + ".occupation_action WHERE player_id = ? AND action = 'SWITCH' "
+                		+ "ORDER BY action_id DESC LIMIT 1;")) {
+			pst.setString(1, p.getHangoutPlayer().getUUID().toString());
+			ResultSet rs = pst.executeQuery();
+			
+			PlayerOccupations occupation = PlayerOccupations.ADVENTURER;
+			if(rs.first()){
+				occupation = PlayerOccupations.valueOf(rs.getString("occupation"));
+			}else{
+				RpgPlayerManager.commitOccupationAction(p, OccupationAction.ADD, occupation);
+				RpgPlayerManager.commitOccupationAction(p, OccupationAction.SWITCH, occupation);
+			}
+			
+			pst.close();
+			
+			p.setOccupation(occupation, false);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void loadExperience(final RpgPlayer p){
+		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+                "SELECT sum(experience) as 'exp_sum' FROM " + Config.databaseName + ".experience_action WHERE player_id = ?;")) {
+			pst.setString(1, p.getHangoutPlayer().getUUID().toString());
+			ResultSet rs = pst.executeQuery();
+			
+			int experience = 0;
+			if(rs.first()){
+				experience = rs.getInt("exp_sum");
+			}
+			
+			pst.close();
+			
+			p.addExperience(experience, false, "DATABASE");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

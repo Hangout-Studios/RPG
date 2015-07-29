@@ -1,7 +1,6 @@
 package com.hangout.rpg.player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -9,6 +8,7 @@ import org.bukkit.ChatColor;
 import com.hangout.core.HangoutAPI;
 import com.hangout.core.player.HangoutPlayer;
 import com.hangout.rpg.guild.Guild;
+import com.hangout.rpg.guild.GuildBonusType;
 import com.hangout.rpg.utils.Experience;
 import com.hangout.rpg.utils.OccupationAction;
 import com.hangout.rpg.utils.PlayerOccupations;
@@ -17,7 +17,7 @@ import com.hangout.rpg.utils.PlayerRaces;
 public class RpgPlayer {
 	
 	private HangoutPlayer hp;
-	private Experience experience = new Experience();
+	private Experience experience = new Experience(this, 100);
 	private PlayerRaces race = PlayerRaces.ELF;
 	private PlayerOccupations occupation = PlayerOccupations.WARRIOR;
 	private List<PlayerOccupations> unlockedOccupations = new ArrayList<PlayerOccupations>();
@@ -33,6 +33,10 @@ public class RpgPlayer {
 	}
 	
 	public void addExperience(int exp, boolean commitToDatabase, String source){
+		if(guild != null && guild.hasBonusActive(GuildBonusType.EXPERIENCE)){
+			exp += (exp / 10);
+		}
+		
 		experience.addExperience(exp);
 		if(commitToDatabase){
 			RpgPlayerManager.commitExperienceAction(this, source, exp);
@@ -57,6 +61,14 @@ public class RpgPlayer {
 	public void setRace(PlayerRaces race){
 		this.race = race;
 		updateDescription();
+	}
+	
+	public void setGuild(Guild g){
+		this.guild = g;
+	}
+	
+	public Guild getGuild(){
+		return guild;
 	}
 	
 	public PlayerOccupations getOccupation(){
@@ -87,9 +99,14 @@ public class RpgPlayer {
 	}
 	
 	public void updateDescription(){
-		hp.setDescription(Arrays.asList(
-				ChatColor.RED + "Race: " + ChatColor.WHITE + ChatColor.ITALIC + race.getDisplayName(),
-				ChatColor.RED + "Level: " + ChatColor.WHITE + ChatColor.ITALIC + getLevel(),
-				ChatColor.RED + "Occupation: " + ChatColor.WHITE + ChatColor.ITALIC + occupation.getDisplayName()));
+		List<String> description = new ArrayList<String>();
+		description.add(ChatColor.RED + "Race: " + ChatColor.WHITE + ChatColor.ITALIC + race.getDisplayName());
+		description.add(ChatColor.RED + "Level: " + ChatColor.WHITE + ChatColor.ITALIC + getLevel());
+		description.add(ChatColor.RED + "Occupation: " + ChatColor.WHITE + ChatColor.ITALIC + occupation.getDisplayName());
+		if(guild != null){
+			description.add(ChatColor.RED + "Guild: " + ChatColor.WHITE + ChatColor.ITALIC + getGuild().getName());
+		}
+		
+		hp.setDescription(description);
 	}
 }

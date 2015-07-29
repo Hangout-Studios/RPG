@@ -1,14 +1,9 @@
 package com.hangout.rpg.listeners;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.hangout.core.Config;
 import com.hangout.core.HangoutAPI;
 import com.hangout.core.events.PlayerJoinCompleteEvent;
 import com.hangout.core.events.PlayerPostLoadEvent;
@@ -17,8 +12,6 @@ import com.hangout.core.events.PlayerQuitCompleteEvent;
 import com.hangout.rpg.Plugin;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
-import com.hangout.rpg.utils.OccupationAction;
-import com.hangout.rpg.utils.PlayerOccupations;
 import com.hangout.rpg.utils.PlayerRaces;
 
 public class PlayerListener implements Listener {
@@ -54,8 +47,8 @@ public class PlayerListener implements Listener {
 				}
 				
 				
-				loadOccupation(p);
-				loadExperience(p);
+				RpgPlayerManager.loadOccupation(p);
+				RpgPlayerManager.loadExperience(p);
 				
 				e.getPlayer().setLoadingState("rpg", true);
 				
@@ -69,49 +62,5 @@ public class PlayerListener implements Listener {
 	public void onPlayerPreSave(PlayerPreSaveEvent e){
 		RpgPlayer rp = RpgPlayerManager.getPlayer(e.getPlayer().getUUID());
 		e.saveSecondaryProperty("race", rp.getRace().toString());
-	}
-	
-	public static void loadOccupation(final RpgPlayer p){
-		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
-                "SELECT occupation FROM " + Config.databaseName + ".occupation_action WHERE player_id = ? AND action = 'SWITCH' "
-                		+ "ORDER BY action_id DESC LIMIT 1;")) {
-			pst.setString(1, p.getHangoutPlayer().getUUID().toString());
-			ResultSet rs = pst.executeQuery();
-			
-			PlayerOccupations occupation = PlayerOccupations.ADVENTURER;
-			if(rs.first()){
-				occupation = PlayerOccupations.valueOf(rs.getString("occupation"));
-			}else{
-				RpgPlayerManager.commitOccupationAction(p, OccupationAction.ADD, occupation);
-				RpgPlayerManager.commitOccupationAction(p, OccupationAction.SWITCH, occupation);
-			}
-			
-			pst.close();
-			
-			p.setOccupation(occupation, false);
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static void loadExperience(final RpgPlayer p){
-		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
-                "SELECT sum(experience) as 'exp_sum' FROM " + Config.databaseName + ".experience_action WHERE player_id = ?;")) {
-			pst.setString(1, p.getHangoutPlayer().getUUID().toString());
-			ResultSet rs = pst.executeQuery();
-			
-			int experience = 0;
-			if(rs.first()){
-				experience = rs.getInt("exp_sum");
-			}
-			
-			pst.close();
-			
-			p.addExperience(experience, false, "DATABASE");
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 }

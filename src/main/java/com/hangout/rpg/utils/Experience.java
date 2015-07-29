@@ -1,14 +1,27 @@
 package com.hangout.rpg.utils;
 
+import org.bukkit.Bukkit;
+
 import com.hangout.core.HangoutAPI;
+import com.hangout.rpg.events.GuildLevelUpEvent;
+import com.hangout.rpg.events.PlayerLevelUpEvent;
+import com.hangout.rpg.guild.Guild;
+import com.hangout.rpg.player.RpgPlayer;
 
 public class Experience {
 	
+	private Object parent;
+	private int maxLevel;
 	private int experience = 0;
 	private int level = 0; //Cache this value
 	
-	public Experience(){
-		
+	public Experience(Object parent, int maxLevel){
+		this.maxLevel = maxLevel;
+		this.parent = parent;
+	}
+	
+	public Object getParent(){
+		return parent;
 	}
 	
 	public int getLevel(){
@@ -29,9 +42,23 @@ public class Experience {
 	}
 	
 	private void updateLevel(){
+		if(this.level >= maxLevel){
+			this.level = maxLevel;
+			return;
+		}
+		
 		int i = 0;
 		while(experience >= getExpToLevel(i)){
 			i++;
+		}
+		if(i > level){
+			for(int count = level; count < i; count++){
+				if(parent instanceof Guild){
+					Bukkit.getPluginManager().callEvent(new GuildLevelUpEvent((Guild)parent, count));
+				}else if(parent instanceof RpgPlayer){
+					Bukkit.getPluginManager().callEvent(new PlayerLevelUpEvent((RpgPlayer)parent, count));
+				}
+			}
 		}
 		this.level = i;
 		HangoutAPI.sendDebugMessage("Level updated to " + i);
