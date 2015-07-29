@@ -1,4 +1,0 @@
-name: RPG
-main: com.hangout.rpg.Plugin
-version: 1.0
-depend: [CorePlugin]
