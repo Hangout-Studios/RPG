@@ -4,11 +4,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.hangout.core.HangoutAPI;
 import com.hangout.core.events.PlayerJoinCompleteEvent;
 import com.hangout.core.events.PlayerPostLoadEvent;
 import com.hangout.core.events.PlayerPreSaveEvent;
 import com.hangout.core.events.PlayerQuitCompleteEvent;
+import com.hangout.core.player.CommonPlayerManager;
+import com.hangout.core.utils.mc.DebugUtils;
 import com.hangout.rpg.Plugin;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
@@ -37,7 +38,7 @@ public class PlayerListener implements Listener {
 				RpgPlayer p = new RpgPlayer(e.getPlayer());
 				RpgPlayerManager.addPlayer(p);
 				
-				HangoutAPI.addCommonPlayer(e.getPlayer().getUUID(), "RPG", p);
+				CommonPlayerManager.addPlayer(e.getPlayer().getUUID(), "RPG", p);
 				
 				String race = (String)e.getProperty("race");
 				if(race.equals("Unknown")){
@@ -52,7 +53,7 @@ public class PlayerListener implements Listener {
 				
 				e.getPlayer().setLoadingState("rpg", true);
 				
-				HangoutAPI.sendDebugMessage("Loaded RPG player: " + e.getPlayer().getName());
+				DebugUtils.sendDebugMessage("Loaded RPG player: " + e.getPlayer().getName());
 			}
 			
 		});

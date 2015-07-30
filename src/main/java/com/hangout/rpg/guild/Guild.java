@@ -56,6 +56,17 @@ public class Guild {
 		return players;
 	}
 	
+	public List<String> getDescription(){
+		List<String> list = new ArrayList<String>();
+		
+		list.add("Tag: " + getTag());
+		list.add("Member count: " + getMembers().size());
+		list.add("Level: " + getLevel());
+		list.add("Experience: " + experience.getExperience() + "/" + experience.getExpToNextLevel());
+		
+		return list;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void addPlayer(RpgPlayer executor, RpgPlayer p, boolean commitToDatabase){
 		if(!players.contains(p)){

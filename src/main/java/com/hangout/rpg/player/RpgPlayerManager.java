@@ -9,7 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 
 import com.hangout.core.Config;
-import com.hangout.core.HangoutAPI;
+import com.hangout.core.utils.database.Database;
 import com.hangout.rpg.Plugin;
 import com.hangout.rpg.utils.OccupationAction;
 import com.hangout.rpg.utils.PlayerOccupations;
@@ -39,7 +39,7 @@ public class RpgPlayerManager {
 		Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), new Runnable(){
 			@Override
 			public void run() {
-				try(PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+				try(PreparedStatement pst = Database.getConnection().prepareStatement(
 		    			"INSERT INTO " + Config.databaseName + ".occupation_action (player_id, occupation, action) VALUES (?, ?, ?)")){
 					pst.setString(1, player.getHangoutPlayer().getUUID().toString());
 					pst.setString(2, occupation.toString());
@@ -57,7 +57,7 @@ public class RpgPlayerManager {
 		Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), new Runnable(){
 			@Override
 			public void run() {
-				try(PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+				try(PreparedStatement pst = Database.getConnection().prepareStatement(
 		    			"INSERT INTO " + Config.databaseName + ".experience_action (player_id, experience, source) VALUES (?, ?, ?)")){
 					pst.setString(1, player.getHangoutPlayer().getUUID().toString());
 					pst.setInt(2, experience);
@@ -72,7 +72,7 @@ public class RpgPlayerManager {
 	}
 	
 	public static void loadOccupation(final RpgPlayer p){
-		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+		try (PreparedStatement pst = Database.getConnection().prepareStatement(
                 "SELECT occupation FROM " + Config.databaseName + ".occupation_action WHERE player_id = ? AND action = 'SWITCH' "
                 		+ "ORDER BY action_id DESC LIMIT 1;")) {
 			pst.setString(1, p.getHangoutPlayer().getUUID().toString());
@@ -96,7 +96,7 @@ public class RpgPlayerManager {
 	}
 	
 	public static void loadExperience(final RpgPlayer p){
-		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+		try (PreparedStatement pst = Database.getConnection().prepareStatement(
                 "SELECT sum(experience) as 'exp_sum' FROM " + Config.databaseName + ".experience_action WHERE player_id = ?;")) {
 			pst.setString(1, p.getHangoutPlayer().getUUID().toString());
 			ResultSet rs = pst.executeQuery();

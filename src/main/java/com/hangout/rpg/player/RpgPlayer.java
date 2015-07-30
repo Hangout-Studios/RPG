@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 
-import com.hangout.core.HangoutAPI;
 import com.hangout.core.player.HangoutPlayer;
+import com.hangout.core.utils.mc.DebugUtils;
 import com.hangout.rpg.guild.Guild;
 import com.hangout.rpg.guild.GuildBonusType;
 import com.hangout.rpg.utils.Experience;
@@ -43,7 +43,7 @@ public class RpgPlayer {
 		}
 		updateDescription();
 		
-		HangoutAPI.sendDebugMessage(hp.getName() + " gained " + exp + " experience from " + source);
+		DebugUtils.sendDebugMessage(hp.getName() + " gained " + exp + " experience from " + source);
 	}
 	
 	public int getExperience(){
@@ -66,7 +66,7 @@ public class RpgPlayer {
 	public void setGuild(Guild g){
 		this.guild = g;
 		
-		HangoutAPI.sendDebugMessage("Added player " + getHangoutPlayer().getName() + " to guild " + g.getName());
+		DebugUtils.sendDebugMessage("Added player " + getHangoutPlayer().getName() + " to guild " + g.getName());
 		updateDescription();
 	}
 	
@@ -75,7 +75,11 @@ public class RpgPlayer {
 	}
 	
 	public boolean isInGuild(){
-		return guild == null;
+		if(guild != null){
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	public PlayerOccupations getOccupation(){
@@ -89,7 +93,7 @@ public class RpgPlayer {
 		}
 		updateDescription();
 		
-		HangoutAPI.sendDebugMessage(hp.getName() + " set occupation to " + occupation.toString());
+		DebugUtils.sendDebugMessage(hp.getName() + " set occupation to " + occupation.toString());
 	}
 	
 	//Exists only for reflection

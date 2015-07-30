@@ -4,12 +4,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import com.hangout.core.events.ChatPlayerClickEvent;
-import com.hangout.rpg.utils.MenuUtils;
+import com.hangout.rpg.utils.RpgMenuUtils;
 
 public class ChatListener implements Listener {
 	
 	@EventHandler
 	public void onChatPlayerClick(ChatPlayerClickEvent e){
-		MenuUtils.createPlayerMenu(e.getPlayer(), e.getClicked()).openMenu(e.getPlayer());
+		RpgMenuUtils.createPlayerMenu(e.getPlayer(), e.getClicked()).openMenu(e.getPlayer());
 	}
 }

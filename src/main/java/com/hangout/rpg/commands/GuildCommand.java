@@ -14,7 +14,7 @@ import com.hangout.rpg.guild.Guild;
 import com.hangout.rpg.guild.GuildManager;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
-import com.hangout.rpg.utils.MenuUtils;
+import com.hangout.rpg.utils.RpgMenuUtils;
 
 public class GuildCommand implements CommandExecutor {
 
@@ -44,7 +44,7 @@ public class GuildCommand implements CommandExecutor {
 			g.addPlayer(inviterRPG, rpgP, true);
 			
 			if(inviterRPG.getHangoutPlayer().isInMenu() && inviterRPG.getHangoutPlayer().getOpenMenu().getTitle().equals(p.getName())){
-				MenuUtils.createPlayerMenu(inviterRPG.getHangoutPlayer(), p).openMenu(inviterRPG.getHangoutPlayer());
+				RpgMenuUtils.createPlayerMenu(inviterRPG.getHangoutPlayer(), p).openMenu(inviterRPG.getHangoutPlayer());
 			}
 			
 			p.clearComandPreparer("guild_invite");

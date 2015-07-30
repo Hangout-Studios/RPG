@@ -12,9 +12,10 @@ import org.bukkit.Bukkit;
 import org.joda.time.DateTime;
 
 import com.hangout.core.Config;
-import com.hangout.core.HangoutAPI;
 import com.hangout.core.player.HangoutPlayer;
+import com.hangout.core.player.HangoutPlayerManager;
 import com.hangout.core.utils.database.Database;
+import com.hangout.core.utils.mc.DebugUtils;
 import com.hangout.rpg.Plugin;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
@@ -41,7 +42,7 @@ public class GuildManager {
 	
 	public static void loadGuilds(){
 		
-		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+		try (PreparedStatement pst = Database.getConnection().prepareStatement(
 				"SELECT id FROM " + Config.databaseName + ".guild ORDER BY id DESC LIMIT 1")) {
 			ResultSet rs = pst.executeQuery();
 			
@@ -54,7 +55,7 @@ public class GuildManager {
 		}
 		
 		//Load all guilds
-		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+		try (PreparedStatement pst = Database.getConnection().prepareStatement(
 				"SELECT id, guild_name, guild_tag FROM " + Config.databaseName + ".guild WHERE is_active = 1;")) {
 			ResultSet rs = pst.executeQuery();
 
@@ -76,12 +77,12 @@ public class GuildManager {
 	}
 	
 	private static void loadGuild(final Guild g){
-		HangoutAPI.sendDebugMessage("Loading guild: " + g.getName());
+		DebugUtils.sendDebugMessage("Loading guild: " + g.getName());
 		
 		int memberCount = 0;
 		
 		//Players
-		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+		try (PreparedStatement pst = Database.getConnection().prepareStatement(
 				"SELECT guildmember_action.player_member AS 'player_member', guildmember_action.action AS 'action', players.name AS 'member_name' "
 				+ "FROM " + Config.databaseName + ".guildmember_action, " + Config.databaseName + ".players "
 				+ "WHERE guildmember_action.guild_id = ? AND players.uuid = guildmember_action.player_member "
@@ -108,7 +109,7 @@ public class GuildManager {
 				Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), new Runnable(){
 					@Override
 					public void run() {
-						HangoutPlayer p = HangoutAPI.getPlayer(id);
+						HangoutPlayer p = HangoutPlayerManager.getPlayer(id);
 						if(p == null){
 							p = Database.loadPlayer(id, playerName);
 						}
@@ -132,7 +133,7 @@ public class GuildManager {
 		}
 		
 		//Experience
-		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+		try (PreparedStatement pst = Database.getConnection().prepareStatement(
                 "SELECT sum(experience) as 'exp_sum' FROM " + Config.databaseName + ".guildexperience_action WHERE guild_id = ?;")) {
 			pst.setInt(1, g.getID());
 			ResultSet rs = pst.executeQuery();
@@ -151,7 +152,7 @@ public class GuildManager {
 		}
 		
 		//Bonuses
-		try (PreparedStatement pst = HangoutAPI.getDatabase().prepareStatement(
+		try (PreparedStatement pst = Database.getConnection().prepareStatement(
                 "SELECT action, bonus, timestamp FROM " + Config.databaseName + ".guildbonus_action WHERE guild_id = ? ORDER BY action_id ASC;")) {
 			pst.setInt(1, g.getID());
 			ResultSet rs = pst.executeQuery();
@@ -195,7 +196,7 @@ public class GuildManager {
 			e.printStackTrace();
 		}
 		
-		HangoutAPI.sendDebugMessage("Loading complete: " + memberCount + " members");
+		DebugUtils.sendDebugMessage("Loading complete: " + memberCount + " members");
 	}
 	
 	public static void executeGuildMemberAction(Guild g, UUID playerMember, UUID playerAction, String action){

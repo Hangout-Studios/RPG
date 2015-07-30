@@ -2,7 +2,7 @@ package com.hangout.rpg.utils;
 
 import org.bukkit.Bukkit;
 
-import com.hangout.core.HangoutAPI;
+import com.hangout.core.utils.mc.DebugUtils;
 import com.hangout.rpg.events.GuildLevelUpEvent;
 import com.hangout.rpg.events.PlayerLevelUpEvent;
 import com.hangout.rpg.guild.Guild;
@@ -61,7 +61,7 @@ public class Experience {
 			}
 		}
 		this.level = i;
-		HangoutAPI.sendDebugMessage("Level updated to " + i);
+		DebugUtils.sendDebugMessage("Level updated to " + i);
 	}
 	
 	public int getExpToLevel(int level){

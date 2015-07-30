@@ -6,7 +6,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.hangout.core.HangoutAPI;
+import com.hangout.core.chat.ChatManager;
+import com.hangout.core.chat.ChatChannel.ChatChannelType;
+import com.hangout.core.utils.database.Database;
 import com.hangout.core.utils.database.Database.PropertyTypes;
 import com.hangout.core.utils.lang.MessageManager;
 import com.hangout.rpg.commands.GuildCommand;
@@ -36,9 +38,11 @@ public class Plugin extends JavaPlugin {
 		
 		this.getCommand("guild").setExecutor(new GuildCommand());
 		
-		HangoutAPI.addCustomPlayerProperty("race", PropertyTypes.STRING);
+		Database.addCustomPlayerProperty("race", PropertyTypes.STRING);
 		
-		HangoutAPI.createMenuItem(HangoutAPI.getMenu("mainmenu"), Material.ARROW, "Friends list", Arrays.asList("Click to check out your friends"), 4 + 9, "friend_item");
+		//HangoutAPI.createMenuItem(Material.ARROW, "Friends list", Arrays.asList("Click to check out your friends"), 4 + 9, "friend_item");
+		
+		ChatManager.createChannel("guild", "(G)", ChatColor.GREEN + "Guild", Arrays.asList("Only for guild members."), ChatChannelType.SERVER_WIDE, Material.BANNER);
 	}
 	
 	public void onDisable(){
