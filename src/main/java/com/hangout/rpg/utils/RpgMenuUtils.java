@@ -69,21 +69,21 @@ public class RpgMenuUtils {
 					if(rpgFriend.getGuild() == rpgPlayer.getGuild()){
 						MenuUtils.createMenuItem(friendMenu, Material.BARRIER, "Kick from guild", Arrays.asList("Click to kick!"), locationGuild, "guild_remove_player");
 					}else{
-						MenuUtils.createMenuItem(friendMenu, Material.BARRIER, "Player is in another guild", Arrays.asList("Cannot invite players", "who are in a different", "guild."), locationGuild, "guild_another_player");
+						MenuUtils.createMenuItem(friendMenu, Material.BANNER, rpgFriend.getGuild().getName(), Arrays.asList("Click to check this guild!"), locationGuild, "guild_menu_open_" + rpgFriend.getGuild().getTag());
 					}
 				}else{
 					MenuUtils.createMenuItem(friendMenu, Material.BANNER, "Invite to guild", Arrays.asList("Click to invite!"), locationGuild, "guild_invite_player");
 				}
 			}else{
 				if(rpgFriend.isInGuild()){
-					MenuUtils.createMenuItem(friendMenu, Material.BARRIER, "Player is in another guild", Arrays.asList("Cannot invite players", "who are in a different", "guild."), locationGuild, "guild_another_player");
+					MenuUtils.createMenuItem(friendMenu, Material.BANNER, rpgFriend.getGuild().getName(), Arrays.asList("Click to check this guild!"), locationGuild, "guild_menu_open_" + rpgFriend.getGuild().getTag());
 				}else{
 					MenuUtils.createMenuItem(friendMenu, Material.BARRIER, "No guild", Arrays.asList("This player is not in", "a guild. Perhaps you", "can start one together?"), locationGuild, "guild_no_guild");
 				}
 			}
 		}else{
 			if(rpgPlayer.isInGuild()){
-				MenuUtils.createMenuItem(friendMenu, Material.BANNER, "Check your guild", Arrays.asList("Click to check!"), locationGuild, "guild_menu_open");
+				MenuUtils.createMenuItem(friendMenu, Material.BANNER, rpgPlayer.getGuild().getName(), Arrays.asList("Click to check your guild!"), locationGuild, "guild_menu_open_" + rpgPlayer.getGuild().getTag());
 			}else{
 				MenuUtils.createMenuItem(friendMenu, Material.BARRIER, "No guild", Arrays.asList("You're not in a guild.", "Ask around to join one!"), locationGuild, "guild_no_guild");
 			}
@@ -92,9 +92,8 @@ public class RpgMenuUtils {
 		return friendMenu;
 	}
 	
-	public static MenuInventory createGuildMenu(HangoutPlayer player){
+	public static MenuInventory createGuildMenu(HangoutPlayer player, Guild g){
 		RpgPlayer rpgPlayer = RpgPlayerManager.getPlayer(player.getUUID());
-		Guild g = rpgPlayer.getGuild();
 		MenuInventory guildMenu = null;
 		
 		if(g == null){
@@ -106,20 +105,30 @@ public class RpgMenuUtils {
 		guildMenu = MenuUtils.createMenu(g.getName(), 1, g.getTag() + "_menu", player);
 		guildMenu.setTemporary(true);
 		
+		int locationGuildInfo = 3;
+		int locationGuildMembers = 5;
+		int locationGuildSettings = 6;
+		
+		if(g.getMembers().contains(rpgPlayer)){
+			locationGuildInfo = 2;
+			locationGuildMembers = 4;
+			MenuUtils.createMenuItem(guildMenu, Material.PAPER, "Guild settings", g.getDescription(), locationGuildSettings, "guild_settings_"+g.getTag());
+		}
+		
 		//Add guild items
-		MenuUtils.createMenuItem(guildMenu, Material.BANNER, "Guild information", g.getDescription(), 3, "guild_information");
-		MenuUtils.createMenuItem(guildMenu, Material.SKULL_ITEM, "Guild members", Arrays.asList("Check player members!"), 5, "guild_members_page_0");
+		MenuUtils.createMenuItem(guildMenu, Material.BANNER, "Guild information", g.getDescription(), locationGuildInfo, "guild_information");
+		MenuUtils.createMenuItem(guildMenu, Material.SKULL_ITEM, "Guild members", Arrays.asList("Check player members!"), locationGuildMembers, "guild_members_"+g.getTag()+"_page_0");
 		
 		return guildMenu;
 	}
 	
-	public static MenuInventory createGuildMembersMenu(HangoutPlayer player, Guild g){
+	public static MenuInventory createGuildMembersMenu(HangoutPlayer player, Guild g, int page){
 		MenuInventory membersMenu = MenuUtils.createMenu(g.getName() + " members", 3, g.getTag() + "_members_menu", player);
 		membersMenu.setTemporary(true);
 		
 		int count = 0;
 		for(RpgPlayer member : g.getMembers()){
-			MenuUtils.createMenuItem(membersMenu, ItemUtils.getPlayerHead(member.getHangoutPlayer().getPlayer(), member.getHangoutPlayer().getName(), member.getHangoutPlayer().getDescription()), count, "guild_member_" + member.getHangoutPlayer().getUUID());
+			MenuUtils.createMenuItem(membersMenu, ItemUtils.getPlayerHead(member.getHangoutPlayer().getPlayer(), member.getHangoutPlayer().getDisplayName(), member.getHangoutPlayer().getDescription()), count, "guild_member_" + member.getHangoutPlayer().getUUID());
 			count++;
 		}
 		

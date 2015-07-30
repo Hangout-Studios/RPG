@@ -19,6 +19,8 @@ import com.hangout.core.menu.MenuUtils;
 import com.hangout.core.player.HangoutPlayer;
 import com.hangout.core.player.HangoutPlayerManager;
 import com.hangout.core.utils.mc.CommandPreparer;
+import com.hangout.rpg.guild.Guild;
+import com.hangout.rpg.guild.GuildManager;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
 import com.hangout.rpg.utils.RpgMenuUtils;
@@ -135,13 +137,18 @@ public class MenuListener implements Listener {
 			return;
 		}
 		
-		if(itemTag.equals("guild_menu_open")){
-			RpgMenuUtils.createGuildMenu(e.getPlayer()).openMenu(e.getPlayer());
+		if(itemTag.startsWith("guild_menu_open_")){
+			Guild g = GuildManager.getGuild(itemTag.split("_")[3]);
+			RpgMenuUtils.createGuildMenu(e.getPlayer(), g).openMenu(e.getPlayer());
 			return;
 		}
 		
-		if(itemTag.equals("guild_members_page_0")){
-			RpgMenuUtils.createGuildMembersMenu(e.getPlayer(), RpgPlayerManager.getPlayer(e.getPlayer().getUUID()).getGuild()).openMenu(e.getPlayer());
+		//guild_members_tag_page_0
+		if(itemTag.startsWith("guild_members_")){
+			String[] split = itemTag.split("_");
+			Guild g = GuildManager.getGuild(split[2]);
+			int page = Integer.parseInt(split[4]);
+			RpgMenuUtils.createGuildMembersMenu(e.getPlayer(), g, page).openMenu(e.getPlayer());
 			return;
 		}
 		

@@ -32,6 +32,15 @@ public class GuildManager {
 		return null;
 	}
 	
+	public static Guild getGuild(String tag){
+		for(Guild g : guilds.values()){
+			if(g.getTag().equals(tag)){
+				return g;
+			}
+		}
+		return null;
+	}
+	
 	public static void createGuild(String name, String tag, RpgPlayer p){
 		Guild g = new Guild(nextID, name, tag);
 		executeGuildUpdate(g, true);
