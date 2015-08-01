@@ -6,8 +6,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.hangout.core.chat.ChatManager;
 import com.hangout.core.chat.ChatChannel.ChatChannelType;
+import com.hangout.core.chat.ChatManager;
 import com.hangout.core.utils.database.Database;
 import com.hangout.core.utils.database.Database.PropertyTypes;
 import com.hangout.core.utils.lang.MessageManager;
@@ -46,7 +46,7 @@ public class Plugin extends JavaPlugin {
 		
 		//HangoutAPI.createMenuItem(Material.ARROW, "Friends list", Arrays.asList("Click to check out your friends"), 4 + 9, "friend_item");
 		
-		ChatManager.createChannel("guild", ChatColor.GREEN + "Guild", Arrays.asList("Only for guild members."), ChatChannelType.SERVER_WIDE, Material.BANNER, true);
+		ChatManager.createChannel("guild", ChatColor.GREEN + "Guild", Arrays.asList("Only for guild members."), ChatChannelType.SERVER_WIDE, Material.BANNER, true, true);
 	}
 	
 	public void onDisable(){

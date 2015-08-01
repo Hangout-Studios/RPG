@@ -1,6 +1,7 @@
 package com.hangout.rpg.player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -18,7 +19,7 @@ import com.hangout.rpg.utils.PlayerRaces;
 public class RpgPlayer {
 	
 	private HangoutPlayer hp;
-	private Experience experience = new Experience(this, 100);
+	private HashMap<PlayerOccupations, Experience> experience = new HashMap<PlayerOccupations, Experience>();
 	private PlayerRaces race = PlayerRaces.ELF;
 	private PlayerOccupations occupation = PlayerOccupations.WARRIOR;
 	private List<PlayerOccupations> unlockedOccupations = new ArrayList<PlayerOccupations>();
@@ -26,6 +27,11 @@ public class RpgPlayer {
 
 	public RpgPlayer(HangoutPlayer hp) {
 		this.hp = hp;
+		
+		for(PlayerOccupations o : PlayerOccupations.values()){
+			experience.put(o, new Experience(this, 100));
+		}
+		
 		updateDescription();
 	}
 	
@@ -33,12 +39,18 @@ public class RpgPlayer {
 		return hp;
 	}
 	
-	public void addExperience(int exp, boolean commitToDatabase, String source){
+	public void addExperience(int exp, boolean commitToDatabase, String source, PlayerOccupations o){
 		if(guild != null && guild.hasBonusActive(GuildBonusType.EXPERIENCE)){
 			exp += (exp / 10);
 		}
 		
-		experience.addExperience(exp);
+		Experience e = experience.get(o);
+		if(e == null){
+			e = new Experience(this, 100);
+		}
+		e.addExperience(exp);
+		experience.put(o, e);
+		
 		if(commitToDatabase){
 			RpgPlayerManager.commitExperienceAction(this, source, exp);
 		}
@@ -47,12 +59,16 @@ public class RpgPlayer {
 		DebugUtils.sendDebugMessage(hp.getName() + " gained " + exp + " experience from " + source, DebugMode.DEBUG);
 	}
 	
-	public int getExperience(){
-		return experience.getExperience();
+	public int getExperience(PlayerOccupations o){
+		return experience.get(0).getExperience();
 	}
 	
-	public int getLevel(){
-		return experience.getLevel();
+	public int getLevel(PlayerOccupations o){
+		return experience.get(0).getLevel();
+	}
+	
+	public int getExperienceToNextLevel(PlayerOccupations o){
+		return experience.get(0).getExpToNextLevel();
 	}
 	
 	public PlayerRaces getRace(){
@@ -113,7 +129,8 @@ public class RpgPlayer {
 	public void updateDescription(){
 		List<String> description = new ArrayList<String>();
 		description.add(ChatColor.RED + "Race: " + ChatColor.WHITE + ChatColor.ITALIC + race.getDisplayName());
-		description.add(ChatColor.RED + "Level: " + ChatColor.WHITE + ChatColor.ITALIC + getLevel());
+		description.add(ChatColor.RED + "Level: " + ChatColor.WHITE + ChatColor.ITALIC + getLevel(occupation));
+		description.add(ChatColor.RED + "Experience: " + ChatColor.WHITE + ChatColor.ITALIC + getExperience(occupation) + "/" + getExperienceToNextLevel(occupation));
 		description.add(ChatColor.RED + "Occupation: " + ChatColor.WHITE + ChatColor.ITALIC + occupation.getDisplayName());
 		if(guild != null){
 			description.add(ChatColor.RED + "Guild: " + ChatColor.WHITE + ChatColor.ITALIC + getGuild().getName());

@@ -97,18 +97,18 @@ public class RpgPlayerManager {
 	
 	public static void loadExperience(final RpgPlayer p){
 		try (PreparedStatement pst = Database.getConnection().prepareStatement(
-                "SELECT sum(experience) as 'exp_sum' FROM " + Config.databaseName + ".experience_action WHERE player_id = ?;")) {
+                "SELECT sum(experience) as 'exp_sum', occupation FROM " + Config.databaseName + ".experience_action WHERE player_id = ? GROUP BY occupation;")) {
 			pst.setString(1, p.getHangoutPlayer().getUUID().toString());
 			ResultSet rs = pst.executeQuery();
 			
-			int experience = 0;
-			if(rs.first()){
-				experience = rs.getInt("exp_sum");
+			while(rs.next()){
+				PlayerOccupations occupation = PlayerOccupations.valueOf(rs.getString("occupation"));
+				int exp = rs.getInt("exp_sum");
+				
+				p.addExperience(exp, false, "DATABASE", occupation);
 			}
 			
 			pst.close();
-			
-			p.addExperience(experience, false, "DATABASE");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -38,18 +38,18 @@ public class GuildCommand implements CommandExecutor {
 		
 		//guild accept <id> <inviter uuid>
 		if(args[0].equals("accept")){
-			Guild g = GuildManager.getGuild(Integer.parseInt(args[2]));
-			Player inviter = Bukkit.getPlayer(UUID.fromString(args[3]));
+			Guild g = GuildManager.getGuild(Integer.parseInt(args[1]));
+			Player inviter = Bukkit.getPlayer(UUID.fromString(args[2]));
 			RpgPlayer inviterRPG = RpgPlayerManager.getPlayer(inviter.getUniqueId());
 			
 			g.addPlayer(inviterRPG, rpgP, GuildRank.NEWBIE, true);
 			
 			if(inviterRPG.getHangoutPlayer().isInMenu() && inviterRPG.getHangoutPlayer().getOpenMenu().getTitle().equals(p.getName())){
-				RpgMenuUtils.createPlayerMenu(inviterRPG.getHangoutPlayer(), p).openMenu(inviterRPG.getHangoutPlayer(), true);
+				RpgMenuUtils.createPlayerMenu(inviterRPG.getHangoutPlayer(), p).openMenu(inviterRPG.getHangoutPlayer(), false);
 			}
 			
-			p.clearComandPreparer("guild_invite");
-			p.clearComandPreparer("guild_decline");
+			p.clearCommandPreparer("guild_invite");
+			p.clearCommandPreparer("guild_decline");
 			return true;
 		}
 		
@@ -58,12 +58,12 @@ public class GuildCommand implements CommandExecutor {
 			Player inviter = Bukkit.getPlayer(UUID.fromString(args[2]));
 			HangoutPlayer inviterHP = HangoutPlayerManager.getPlayer(inviter);
 			
-			p.getClickableName(inviterHP, false)
+			p.getClickableName(inviterHP, false, false)
 				.then(" has declined your guild invite.")
 			.send(inviterHP.getPlayer());
 			
-			p.clearComandPreparer("guild_invite");
-			p.clearComandPreparer("guild_decline");
+			p.clearCommandPreparer("guild_invite");
+			p.clearCommandPreparer("guild_decline");
 			return true;
 		}
 		

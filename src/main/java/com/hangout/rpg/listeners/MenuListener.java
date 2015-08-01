@@ -38,7 +38,7 @@ public class MenuListener implements Listener {
 		
 		String itemTag = e.getItem().getTag();
 		
-		if(itemTag.equals("friend_item")){
+		if(itemTag.equals("friend_list")){
 			RpgMenuUtils.createFriendListMenu(e.getPlayer()).openMenu(e.getPlayer(), true);
 			return;
 		}
@@ -50,17 +50,17 @@ public class MenuListener implements Listener {
 		
 		if(itemTag.equals("remove_friend")){
 			UUID friendID = UUID.fromString(e.getPlayer().getOpenMenu().getTag().split("_")[0]);			
-			e.getPlayer().removeFriend(HangoutPlayerManager.getPlayer(friendID), false);
+			e.getPlayer().removeFriend(HangoutPlayerManager.getPlayer(friendID), true);
 			
-			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), true);
+			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), false);
 			return;
 		}
 		
 		if(itemTag.equals("add_friend")){
 			UUID friendID = UUID.fromString(e.getPlayer().getOpenMenu().getTag().split("_")[0]);			
-			e.getPlayer().addFriend(HangoutPlayerManager.getPlayer(friendID), false);
+			e.getPlayer().addFriend(HangoutPlayerManager.getPlayer(friendID), true);
 			
-			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), true);
+			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), false);
 			return;
 		}
 		
@@ -108,7 +108,7 @@ public class MenuListener implements Listener {
 			command.append(rpgPlayer.getHangoutPlayer().getUUID().toString());
 			
 			//Invite text
-			rpgPlayer.getHangoutPlayer().getClickableName(rpgFriend.getHangoutPlayer(), false)
+			rpgPlayer.getHangoutPlayer().getClickableName(rpgFriend.getHangoutPlayer(), false, false)
 				.then(" has invited you the guild " + rpgPlayer.getGuild().getName() + ".")
 				.send(rpgFriend.getHangoutPlayer().getPlayer());
 			
@@ -143,8 +143,8 @@ public class MenuListener implements Listener {
 			return;
 		}
 		
-		if(itemTag.startsWith("guild_member_")){
-			HangoutPlayer p = HangoutPlayerManager.getPlayer(UUID.fromString(itemTag.split("_")[2]));
+		if(itemTag.startsWith("profile_")){
+			HangoutPlayer p = HangoutPlayerManager.getPlayer(UUID.fromString(itemTag.split("_")[1]));
 			RpgMenuUtils.createPlayerMenu(e.getPlayer(), p).openMenu(e.getPlayer(), true);
 			return;
 		}

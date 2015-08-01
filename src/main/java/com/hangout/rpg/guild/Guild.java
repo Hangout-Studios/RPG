@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import mkremins.fanciful.FancyMessage;
+import net.md_5.bungee.api.ChatColor;
 
-import org.bukkit.ChatColor;
 import org.joda.time.DateTime;
 
 import com.hangout.rpg.player.RpgPlayer;
@@ -59,10 +59,10 @@ public class Guild {
 	public List<String> getDescription(){
 		List<String> list = new ArrayList<String>();
 		
-		list.add("Tag: " + getTag());
-		list.add("Member count: " + getMembers().size());
-		list.add("Level: " + getLevel());
-		list.add("Experience: " + experience.getExperience() + "/" + experience.getExpToNextLevel());
+		list.add(ChatColor.WHITE + "Tag: " + ChatColor.WHITE + ChatColor.ITALIC + getTag());
+		list.add(ChatColor.WHITE + "Member count: " + ChatColor.WHITE + ChatColor.ITALIC + getMembers().size());
+		list.add(ChatColor.WHITE + "Level: " + ChatColor.WHITE + ChatColor.ITALIC + getLevel());
+		list.add(ChatColor.WHITE + "Experience: " + ChatColor.WHITE + ChatColor.ITALIC + experience.getExperience() + "/" + experience.getExpToNextLevel());
 		
 		return list;
 	}
@@ -74,7 +74,6 @@ public class Guild {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void addPlayer(RpgPlayer executor, RpgPlayer p, GuildRank rank, boolean commitToDatabase){
 		if(!players.containsKey(p)){
 			if(players.size() >= sizeLimit){
@@ -87,15 +86,9 @@ public class Guild {
 			if(commitToDatabase){
 				for(RpgPlayer guildie : getMembers()){
 					if(guildie.getHangoutPlayer().isOnline()){
-						HashMap<String, Object> nameConfig =  p.getHangoutPlayer().getClickableNameConfig(guildie.getHangoutPlayer());
-						new FancyMessage("Please welcome ")
-						.then((String)nameConfig.get("text"))
-							.color((ChatColor)nameConfig.get("color"))
-							.style((ChatColor[])nameConfig.get("styles"))
-							.command((String)nameConfig.get("command"))
-							.tooltip((List<String>)nameConfig.get("tooltip"))
-						.then(" to the guild!")
-						.send(guildie.getHangoutPlayer().getPlayer());
+						p.getHangoutPlayer().addClickableName(new FancyMessage("Please welcome "), guildie.getHangoutPlayer())
+							.then(" to the guild!")
+							.send(guildie.getHangoutPlayer().getPlayer());
 					}
 				}
 			
@@ -104,22 +97,13 @@ public class Guild {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void removePlayer(RpgPlayer executor, RpgPlayer p, boolean commitToDatabase){
 		if(players.containsKey(p)){
 			players.remove(p);
 			
 			p.setGuild(null);
 			
-			HashMap<String, Object> nameConfig =  executor.getHangoutPlayer().getClickableNameConfig(executor.getHangoutPlayer());
-			
-			p.getHangoutPlayer().getPlayer().sendMessage("You have been removed from the guild by ");
-			new FancyMessage("You have been removed from the guild by ")
-				.then((String)nameConfig.get("text"))
-					.color((ChatColor)nameConfig.get("color"))
-					.style((ChatColor[])nameConfig.get("styles"))
-					.command((String)nameConfig.get("command"))
-					.tooltip((List<String>)nameConfig.get("tooltip"))
+			executor.getHangoutPlayer().addClickableName(new FancyMessage("You have been removed from the guild by "), p.getHangoutPlayer())
 				.send(p.getHangoutPlayer().getPlayer());
 			
 			if(commitToDatabase){

@@ -19,6 +19,7 @@ public class Experience {
 	public Experience(Object parent, int maxLevel){
 		this.maxLevel = maxLevel;
 		this.parent = parent;
+		addExperience(1);
 	}
 	
 	public Object getParent(){
@@ -53,6 +54,8 @@ public class Experience {
 			i++;
 		}
 		if(i > level){
+			this.level = i;
+			DebugUtils.sendDebugMessage("Level updated to " + i, DebugMode.DEBUG);
 			for(int count = level; count < i; count++){
 				if(parent instanceof Guild){
 					Bukkit.getPluginManager().callEvent(new GuildLevelUpEvent((Guild)parent, count));
@@ -61,8 +64,6 @@ public class Experience {
 				}
 			}
 		}
-		this.level = i;
-		DebugUtils.sendDebugMessage("Level updated to " + i, DebugMode.DEBUG);
 	}
 	
 	public int getExpToLevel(int level){

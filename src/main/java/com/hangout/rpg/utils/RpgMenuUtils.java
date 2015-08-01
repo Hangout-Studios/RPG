@@ -23,7 +23,7 @@ public class RpgMenuUtils {
 		
 		int count = 0;
 		for(HangoutPlayer friend : p.getFriends()){
-			MenuUtils.createMenuItem(friendMenu, ItemUtils.getPlayerHead(friend.getPlayer(), friend.getDisplayName(), friend.getDescription()), count, "friend_" + friend.getUUID());
+			MenuUtils.createMenuItem(friendMenu, ItemUtils.getPlayerHead(friend.getPlayer(), friend.getDisplayName(), friend.getDescription()), count, "profile_" + friend.getUUID());
 			count++;
 		}
 		
@@ -43,7 +43,7 @@ public class RpgMenuUtils {
 		int locationGuild = 7;
 		
 		if(rpgPlayer != rpgFriend){
-			if(player.isFriend(friend.getUUID())){
+			if(player.isFriend(friend)){
 				MenuUtils.createMenuItem(friendMenu, Material.LAVA_BUCKET, "Remove friend", Arrays.asList("Click to remove!"), locationFriend, "remove_friend");
 			}else{
 				MenuUtils.createMenuItem(friendMenu, Material.PAPER, "Add as friend", Arrays.asList("Click to add!"), locationFriend, "add_friend");
@@ -126,7 +126,7 @@ public class RpgMenuUtils {
 		int count = 0;
 		for(RpgPlayer member : g.getMembers()){
 			ItemStack playerHead = ItemUtils.getPlayerHead(member.getHangoutPlayer().getPlayer(), member.getHangoutPlayer().getDisplayName(), member.getHangoutPlayer().getDescription());
-			MenuUtils.createMenuItem(membersMenu, playerHead, count, "guild_member_" + member.getHangoutPlayer().getUUID());
+			MenuUtils.createMenuItem(membersMenu, playerHead, count, "profile_" + member.getHangoutPlayer().getUUID());
 			count++;
 		}		
 		return membersMenu;
