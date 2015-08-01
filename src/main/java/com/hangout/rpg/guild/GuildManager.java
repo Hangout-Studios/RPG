@@ -15,7 +15,6 @@ import com.hangout.core.Config;
 import com.hangout.core.player.HangoutPlayer;
 import com.hangout.core.player.HangoutPlayerManager;
 import com.hangout.core.utils.database.Database;
-import com.hangout.core.utils.mc.DebugUtils;
 import com.hangout.rpg.Plugin;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
@@ -44,121 +43,77 @@ public class GuildManager {
 	public static void createGuild(String name, String tag, RpgPlayer p){
 		Guild g = new Guild(nextID, name, tag);
 		executeGuildUpdate(g, true);
-		g.addPlayer(p, p, true);
+		executeGuildExperienceAction(g, 0, "INITIAL");
+		g.addPlayer(p, p, GuildRank.LEADER, true);
 		guilds.put(g.getID(), g);
 		nextID++;
 	}
 	
 	public static void loadGuilds(){
 		
-		try (PreparedStatement pst = Database.getConnection().prepareStatement(
-				"SELECT id FROM " + Config.databaseName + ".guild ORDER BY id DESC LIMIT 1")) {
-			ResultSet rs = pst.executeQuery();
+		//Load all guilds
+		try(PreparedStatement pst = Database.getConnection().prepareStatement(
+				"SELECT max(t_action.action_id) as action_id, t_action.action as action, "
+				+ "t_action.player_member as player_id, v_players.name as player_name, "
+				+ "v_guilds.guild_name as guild_name, v_guilds.guild_tag as guild_tag, v_guilds.guild_id as guild_id, v_experience.experience " +
+				"FROM " + Config.databaseName + ".guildmember_action t_action " +
+				"JOIN( " +
+					"SELECT t_guilds.id as guild_id, t_guilds.is_active as active, t_guilds.guild_name as guild_name, t_guilds.guild_tag as guild_tag " +
+					"FROM " + Config.databaseName + ".guild t_guilds " +
+				") v_guilds ON(t_action.guild_id = v_guilds.guild_id) " +
+				"JOIN( " +
+					"SELECT t_players.name, t_players.uuid " +
+					"FROM " + Config.databaseName + ".players t_players " +
+				") v_players ON(t_action.player_member = v_players.uuid) " +
+				"JOIN( " +
+					"SELECT sum(t_experience.experience) as experience, t_experience.guild_id as id " +
+					"FROM server_hangout.guildexperience_action t_experience " +
+				") v_experience ON(t_action.guild_id = v_experience.id) " +
+				"WHERE v_guilds.active = 1 and (action = 'ADD_PLAYER' or action = 'REMOVE_PLAYER') " +
+				"GROUP BY v_players.name"
+				)){
 			
-			if(rs.first()){
-				nextID = rs.getInt("id") + 1;
+			ResultSet rs = pst.executeQuery();
+			while(rs.next()){
+				final String guildName = rs.getString("guild_name");
+				if(GuildManager.getGuild(guildName) == null){
+					Guild g = new Guild(rs.getInt("guild_id"), guildName, rs.getString("guild_tag"));
+					g.addExperience(rs.getInt("guild_experience"), "DATABASE", false);
+					loadBonusses(g);
+				}
+				if(rs.getString("action").equals("ADD_PLAYER")){
+					final UUID playerID = UUID.fromString(rs.getString("player_id"));
+					final String playerName = rs.getString("player_name");
+					Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), new Runnable(){
+						@Override
+						public void run() {
+							HangoutPlayer p = HangoutPlayerManager.getPlayer(playerID);
+							if(p == null){
+								p = Database.loadPlayer(playerID, playerName);
+							}
+					
+							while(true){
+								if(p != null && p.isReadyLoading()){
+									RpgPlayer rpgP = RpgPlayerManager.getPlayer(playerID);
+									if(rpgP != null){
+										getGuild(guildName).addPlayer(rpgP, rpgP, GuildRank.NEWBIE, false);
+										break;
+									}
+								}
+							}
+						}
+					});
+				}
 			}
 			
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		
-		//Load all guilds
-		try (PreparedStatement pst = Database.getConnection().prepareStatement(
-				"SELECT id, guild_name, guild_tag FROM " + Config.databaseName + ".guild WHERE is_active = 1;")) {
-			ResultSet rs = pst.executeQuery();
-
-			while(rs.next()){
-				int id = rs.getInt("id");
-				String name = rs.getString("guild_name");
-				String tag = rs.getString("guild_tag");
-
-				Guild g = new Guild(id, name, tag);
-				loadGuild(g);
-				guilds.put(g.getID(), g);
-			}
-
-			pst.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	
 	}
 	
-	private static void loadGuild(final Guild g){
-		DebugUtils.sendDebugMessage("Loading guild: " + g.getName());
-		
-		int memberCount = 0;
-		
-		//Players
-		try (PreparedStatement pst = Database.getConnection().prepareStatement(
-				"SELECT guildmember_action.player_member AS 'player_member', guildmember_action.action AS 'action', players.name AS 'member_name' "
-				+ "FROM " + Config.databaseName + ".guildmember_action, " + Config.databaseName + ".players "
-				+ "WHERE guildmember_action.guild_id = ? AND players.uuid = guildmember_action.player_member "
-				+ "ORDER BY guildmember_action.action_id ASC;")) {
-			pst.setInt(1, g.getID());
-			ResultSet rs = pst.executeQuery();
-			
-			HashMap<UUID, String> currentMembers = new HashMap<UUID, String>();
-			while(rs.next()){
-				UUID id = UUID.fromString(rs.getString("player_member"));
-				String action = rs.getString("action");
-				String name = rs.getString("member_name");
-				if(action.equals("ADD_PLAYER")){
-					currentMembers.put(id, name);
-				}else if(action.equals("REMOVE_PLAYER")){
-					currentMembers.remove(id);
-				}
-			}
-			
-			pst.close();
-			
-			for(final UUID id : currentMembers.keySet()){
-				final String playerName = currentMembers.get(id);
-				Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), new Runnable(){
-					@Override
-					public void run() {
-						HangoutPlayer p = HangoutPlayerManager.getPlayer(id);
-						if(p == null){
-							p = Database.loadPlayer(id, playerName);
-						}
-				
-						while(true){
-							if(p != null && p.isReadyLoading()){
-								RpgPlayer rpgP = RpgPlayerManager.getPlayer(id);
-								if(rpgP != null){
-									g.addPlayer(rpgP, rpgP, false);
-									break;
-								}
-							}
-						}
-					}
-				});
-			}
-			
-			memberCount = currentMembers.size();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		//Experience
-		try (PreparedStatement pst = Database.getConnection().prepareStatement(
-                "SELECT sum(experience) as 'exp_sum' FROM " + Config.databaseName + ".guildexperience_action WHERE guild_id = ?;")) {
-			pst.setInt(1, g.getID());
-			ResultSet rs = pst.executeQuery();
-			
-			int experience = 0;
-			if(rs.first()){
-				experience = rs.getInt("exp_sum");
-			}
-			
-			pst.close();
-			
-			g.addExperience(experience, "DATABASE", false);
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	private static void loadBonusses(final Guild g){
+		//DebugUtils.sendDebugMessage("Loading guild: " + g.getName());
 		
 		//Bonuses
 		try (PreparedStatement pst = Database.getConnection().prepareStatement(
@@ -204,8 +159,6 @@ public class GuildManager {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		DebugUtils.sendDebugMessage("Loading complete: " + memberCount + " members");
 	}
 	
 	public static void executeGuildMemberAction(Guild g, UUID playerMember, UUID playerAction, String action){

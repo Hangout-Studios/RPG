@@ -26,7 +26,7 @@ public class Guild {
 	private String name;
 	private String tag;
 	private int sizeLimit = 100;
-	private List<RpgPlayer> players = new ArrayList<RpgPlayer>();
+	private HashMap<RpgPlayer, GuildRank> players = new HashMap<RpgPlayer, GuildRank>();
 	private Experience experience = new Experience(this, 5);
 	private List<GuildBonus> bonusses = new ArrayList<GuildBonus>();
 	
@@ -53,7 +53,7 @@ public class Guild {
 	}
 	
 	public List<RpgPlayer> getMembers(){
-		return players;
+		return new ArrayList<RpgPlayer>(players.keySet());
 	}
 	
 	public List<String> getDescription(){
@@ -67,18 +67,25 @@ public class Guild {
 		return list;
 	}
 	
+	public GuildRank getPlayerRank(RpgPlayer p){
+		if(players.containsKey(p)){
+			return players.get(p);
+		}
+		return null;
+	}
+	
 	@SuppressWarnings("unchecked")
-	public void addPlayer(RpgPlayer executor, RpgPlayer p, boolean commitToDatabase){
-		if(!players.contains(p)){
+	public void addPlayer(RpgPlayer executor, RpgPlayer p, GuildRank rank, boolean commitToDatabase){
+		if(!players.containsKey(p)){
 			if(players.size() >= sizeLimit){
 				executor.getHangoutPlayer().getPlayer().sendMessage("The guild is full.");
 			}
-			players.add(p);
 			
+			players.put(p, rank);
 			p.setGuild(this);
 			
 			if(commitToDatabase){
-				for(RpgPlayer guildie : players){
+				for(RpgPlayer guildie : getMembers()){
 					if(guildie.getHangoutPlayer().isOnline()){
 						HashMap<String, Object> nameConfig =  p.getHangoutPlayer().getClickableNameConfig(guildie.getHangoutPlayer());
 						new FancyMessage("Please welcome ")
@@ -99,7 +106,7 @@ public class Guild {
 	
 	@SuppressWarnings("unchecked")
 	public void removePlayer(RpgPlayer executor, RpgPlayer p, boolean commitToDatabase){
-		if(players.contains(p)){
+		if(players.containsKey(p)){
 			players.remove(p);
 			
 			p.setGuild(null);

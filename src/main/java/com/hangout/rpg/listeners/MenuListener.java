@@ -1,8 +1,6 @@
 package com.hangout.rpg.listeners;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import mkremins.fanciful.FancyMessage;
@@ -31,39 +29,38 @@ public class MenuListener implements Listener {
 	public void onMenuCreate(MenuCreateEvent e){
 		MenuInventory menu = e.getMenu();
 		if(e.getMenu().getTag().equals("main_menu")){
-			MenuUtils.createMenuItem(menu, Material.ANVIL, "Profile & Settings", Arrays.asList("Check your own profile", "and change all kinds of", "settings!"), 1 + 9, "profile_item");
+			MenuUtils.createMenuItem(menu, Material.ANVIL, "Profile", Arrays.asList("Check your own profile!"), 1 + 9, "profile_item");
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@EventHandler
 	public void onMenuClick(MenuItemClickEvent e){
 		
 		String itemTag = e.getItem().getTag();
 		
 		if(itemTag.equals("friend_item")){
-			RpgMenuUtils.createFriendListMenu(e.getPlayer()).openMenu(e.getPlayer());
+			RpgMenuUtils.createFriendListMenu(e.getPlayer()).openMenu(e.getPlayer(), true);
 			return;
 		}
 		
 		if(itemTag.equals("profile_item")){
-			RpgMenuUtils.createPlayerMenu(e.getPlayer(), e.getPlayer()).openMenu(e.getPlayer());
+			RpgMenuUtils.createPlayerMenu(e.getPlayer(), e.getPlayer()).openMenu(e.getPlayer(), true);
 			return;
 		}
 		
 		if(itemTag.equals("remove_friend")){
 			UUID friendID = UUID.fromString(e.getPlayer().getOpenMenu().getTag().split("_")[0]);			
-			e.getPlayer().removeFriend(HangoutPlayerManager.getPlayer(friendID), true);
+			e.getPlayer().removeFriend(HangoutPlayerManager.getPlayer(friendID), false);
 			
-			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer());
+			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), true);
 			return;
 		}
 		
 		if(itemTag.equals("add_friend")){
 			UUID friendID = UUID.fromString(e.getPlayer().getOpenMenu().getTag().split("_")[0]);			
-			e.getPlayer().addFriend(HangoutPlayerManager.getPlayer(friendID), true);
+			e.getPlayer().addFriend(HangoutPlayerManager.getPlayer(friendID), false);
 			
-			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer());
+			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), true);
 			return;
 		}
 		
@@ -71,7 +68,7 @@ public class MenuListener implements Listener {
 			UUID friendID = UUID.fromString(e.getPlayer().getOpenMenu().getTag().split("_")[0]);			
 			e.getPlayer().addMutedPlayer(friendID, true);
 			
-			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer());
+			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), false);
 			return;
 		}
 		
@@ -79,7 +76,7 @@ public class MenuListener implements Listener {
 			UUID friendID = UUID.fromString(e.getPlayer().getOpenMenu().getTag().split("_")[0]);
 			e.getPlayer().removeMutedPlayer(friendID, true);
 			
-			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer());
+			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), false);
 			return;
 		}
 		
@@ -89,7 +86,7 @@ public class MenuListener implements Listener {
 			RpgPlayer rpgPlayer = RpgPlayerManager.getPlayer(e.getPlayer().getUUID());
 			
 			rpgPlayer.getGuild().removePlayer(rpgPlayer, rpgFriend, true);
-			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer());
+			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), false);
 			return;
 		}
 		
@@ -110,14 +107,8 @@ public class MenuListener implements Listener {
 			command.append(""+rpgPlayer.getGuild().getID());
 			command.append(rpgPlayer.getHangoutPlayer().getUUID().toString());
 			
-			HashMap<String, Object> nameConfig =  rpgPlayer.getHangoutPlayer().getClickableNameConfig(rpgFriend.getHangoutPlayer());
-			
 			//Invite text
-			new FancyMessage((String)nameConfig.get("text"))
-					.color((ChatColor)nameConfig.get("color"))
-					.style((ChatColor[])nameConfig.get("styles"))
-					.command((String)nameConfig.get("command"))
-					.tooltip((List<String>)nameConfig.get("tooltip"))
+			rpgPlayer.getHangoutPlayer().getClickableName(rpgFriend.getHangoutPlayer(), false)
 				.then(" has invited you the guild " + rpgPlayer.getGuild().getName() + ".")
 				.send(rpgFriend.getHangoutPlayer().getPlayer());
 			
@@ -133,13 +124,13 @@ public class MenuListener implements Listener {
 				.command("/text execute prepared guild_decline")
 			.send(rpgFriend.getHangoutPlayer().getPlayer());
 			
-			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer());
+			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), false);
 			return;
 		}
 		
 		if(itemTag.startsWith("guild_menu_open_")){
 			Guild g = GuildManager.getGuild(itemTag.split("_")[3]);
-			RpgMenuUtils.createGuildMenu(e.getPlayer(), g).openMenu(e.getPlayer());
+			RpgMenuUtils.createGuildMenu(e.getPlayer(), g).openMenu(e.getPlayer(), true);
 			return;
 		}
 		
@@ -148,13 +139,13 @@ public class MenuListener implements Listener {
 			String[] split = itemTag.split("_");
 			Guild g = GuildManager.getGuild(split[2]);
 			int page = Integer.parseInt(split[4]);
-			RpgMenuUtils.createGuildMembersMenu(e.getPlayer(), g, page).openMenu(e.getPlayer());
+			RpgMenuUtils.createGuildMembersMenu(e.getPlayer(), g, page).openMenu(e.getPlayer(), true);
 			return;
 		}
 		
 		if(itemTag.startsWith("guild_member_")){
 			HangoutPlayer p = HangoutPlayerManager.getPlayer(UUID.fromString(itemTag.split("_")[2]));
-			RpgMenuUtils.createPlayerMenu(e.getPlayer(), p).openMenu(e.getPlayer());
+			RpgMenuUtils.createPlayerMenu(e.getPlayer(), p).openMenu(e.getPlayer(), true);
 			return;
 		}
 	}

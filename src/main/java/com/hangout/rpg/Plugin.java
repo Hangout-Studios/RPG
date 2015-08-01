@@ -13,7 +13,9 @@ import com.hangout.core.utils.database.Database.PropertyTypes;
 import com.hangout.core.utils.lang.MessageManager;
 import com.hangout.rpg.commands.GuildCommand;
 import com.hangout.rpg.guild.GuildManager;
+import com.hangout.rpg.listeners.BattleListener;
 import com.hangout.rpg.listeners.ChatListener;
+import com.hangout.rpg.listeners.LevelListener;
 import com.hangout.rpg.listeners.MenuListener;
 import com.hangout.rpg.listeners.PlayerListener;
 import com.mysql.jdbc.StringUtils;
@@ -35,6 +37,8 @@ public class Plugin extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		this.getServer().getPluginManager().registerEvents(new MenuListener(), this);
 		this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
+		this.getServer().getPluginManager().registerEvents(new LevelListener(), this);
+		this.getServer().getPluginManager().registerEvents(new BattleListener(), this);
 		
 		this.getCommand("guild").setExecutor(new GuildCommand());
 		
@@ -42,7 +46,7 @@ public class Plugin extends JavaPlugin {
 		
 		//HangoutAPI.createMenuItem(Material.ARROW, "Friends list", Arrays.asList("Click to check out your friends"), 4 + 9, "friend_item");
 		
-		ChatManager.createChannel("guild", "(G)", ChatColor.GREEN + "Guild", Arrays.asList("Only for guild members."), ChatChannelType.SERVER_WIDE, Material.BANNER);
+		ChatManager.createChannel("guild", ChatColor.GREEN + "Guild", Arrays.asList("Only for guild members."), ChatChannelType.SERVER_WIDE, Material.BANNER, true);
 	}
 	
 	public void onDisable(){

@@ -10,6 +10,7 @@ import com.hangout.core.events.PlayerPreSaveEvent;
 import com.hangout.core.events.PlayerQuitCompleteEvent;
 import com.hangout.core.player.CommonPlayerManager;
 import com.hangout.core.utils.mc.DebugUtils;
+import com.hangout.core.utils.mc.DebugUtils.DebugMode;
 import com.hangout.rpg.Plugin;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
@@ -53,7 +54,7 @@ public class PlayerListener implements Listener {
 				
 				e.getPlayer().setLoadingState("rpg", true);
 				
-				DebugUtils.sendDebugMessage("Loaded RPG player: " + e.getPlayer().getName());
+				DebugUtils.sendDebugMessage("Loaded RPG player: " + e.getPlayer().getName(), DebugMode.INFO);
 			}
 			
 		});

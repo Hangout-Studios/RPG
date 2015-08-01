@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 
 import com.hangout.core.player.HangoutPlayer;
 import com.hangout.core.utils.mc.DebugUtils;
+import com.hangout.core.utils.mc.DebugUtils.DebugMode;
 import com.hangout.rpg.guild.Guild;
 import com.hangout.rpg.guild.GuildBonusType;
 import com.hangout.rpg.utils.Experience;
@@ -43,7 +44,7 @@ public class RpgPlayer {
 		}
 		updateDescription();
 		
-		DebugUtils.sendDebugMessage(hp.getName() + " gained " + exp + " experience from " + source);
+		DebugUtils.sendDebugMessage(hp.getName() + " gained " + exp + " experience from " + source, DebugMode.DEBUG);
 	}
 	
 	public int getExperience(){
@@ -66,7 +67,7 @@ public class RpgPlayer {
 	public void setGuild(Guild g){
 		this.guild = g;
 		
-		DebugUtils.sendDebugMessage("Added player " + getHangoutPlayer().getName() + " to guild " + g.getName());
+		DebugUtils.sendDebugMessage("Added player " + getHangoutPlayer().getName() + " to guild " + g.getName(), DebugMode.INFO);
 		updateDescription();
 	}
 	
@@ -93,7 +94,7 @@ public class RpgPlayer {
 		}
 		updateDescription();
 		
-		DebugUtils.sendDebugMessage(hp.getName() + " set occupation to " + occupation.toString());
+		DebugUtils.sendDebugMessage(hp.getName() + " set occupation to " + occupation.toString(), DebugMode.INFO);
 	}
 	
 	//Exists only for reflection

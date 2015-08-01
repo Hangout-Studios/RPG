@@ -12,6 +12,7 @@ import com.hangout.core.player.HangoutPlayer;
 import com.hangout.core.player.HangoutPlayerManager;
 import com.hangout.rpg.guild.Guild;
 import com.hangout.rpg.guild.GuildManager;
+import com.hangout.rpg.guild.GuildRank;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
 import com.hangout.rpg.utils.RpgMenuUtils;
@@ -36,15 +37,15 @@ public class GuildCommand implements CommandExecutor {
 		}
 		
 		//guild accept <id> <inviter uuid>
-		if(args[1].equals("accept")){
+		if(args[0].equals("accept")){
 			Guild g = GuildManager.getGuild(Integer.parseInt(args[2]));
 			Player inviter = Bukkit.getPlayer(UUID.fromString(args[3]));
 			RpgPlayer inviterRPG = RpgPlayerManager.getPlayer(inviter.getUniqueId());
 			
-			g.addPlayer(inviterRPG, rpgP, true);
+			g.addPlayer(inviterRPG, rpgP, GuildRank.NEWBIE, true);
 			
 			if(inviterRPG.getHangoutPlayer().isInMenu() && inviterRPG.getHangoutPlayer().getOpenMenu().getTitle().equals(p.getName())){
-				RpgMenuUtils.createPlayerMenu(inviterRPG.getHangoutPlayer(), p).openMenu(inviterRPG.getHangoutPlayer());
+				RpgMenuUtils.createPlayerMenu(inviterRPG.getHangoutPlayer(), p).openMenu(inviterRPG.getHangoutPlayer(), true);
 			}
 			
 			p.clearComandPreparer("guild_invite");

@@ -10,6 +10,6 @@ public class ChatListener implements Listener {
 	
 	@EventHandler
 	public void onChatPlayerClick(ChatPlayerClickEvent e){
-		RpgMenuUtils.createPlayerMenu(e.getPlayer(), e.getClicked()).openMenu(e.getPlayer());
+		RpgMenuUtils.createPlayerMenu(e.getPlayer(), e.getClicked()).openMenu(e.getPlayer(), true);
 	}
 }
