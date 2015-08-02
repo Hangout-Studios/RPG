@@ -60,15 +60,15 @@ public class RpgPlayer {
 	}
 	
 	public int getExperience(PlayerOccupations o){
-		return experience.get(0).getExperience();
+		return experience.get(o).getExperience();
 	}
 	
 	public int getLevel(PlayerOccupations o){
-		return experience.get(0).getLevel();
+		return experience.get(o).getLevel();
 	}
 	
 	public int getExperienceToNextLevel(PlayerOccupations o){
-		return experience.get(0).getExpToNextLevel();
+		return experience.get(o).getExpToNextLevel();
 	}
 	
 	public PlayerRaces getRace(){
@@ -83,7 +83,11 @@ public class RpgPlayer {
 	public void setGuild(Guild g){
 		this.guild = g;
 		
-		DebugUtils.sendDebugMessage("Added player " + getHangoutPlayer().getName() + " to guild " + g.getName(), DebugMode.INFO);
+		if(g != null){
+			DebugUtils.sendDebugMessage("Added player " + getHangoutPlayer().getName() + " to guild " + g.getName(), DebugMode.INFO);
+		}else{
+			DebugUtils.sendDebugMessage("Removed player " + getHangoutPlayer().getName() + " from guild.", DebugMode.INFO);
+		}
 		updateDescription();
 	}
 	
@@ -126,14 +130,25 @@ public class RpgPlayer {
 		}
 	}
 	
+	public List<String> getOccupationDescriptions(){
+		List<String> list = new ArrayList<String>();
+		for(PlayerOccupations o : experience.keySet()){
+			list.add(ChatColor.RED + o.getDisplayName() + ChatColor.WHITE + " level " + 
+					getLevel(o) + " - Exp " + getExperience(o) + "/" + getExperienceToNextLevel(o));
+		}
+		return list;
+	}
+	
 	public void updateDescription(){
 		List<String> description = new ArrayList<String>();
 		description.add(ChatColor.RED + "Race: " + ChatColor.WHITE + ChatColor.ITALIC + race.getDisplayName());
+		description.add(ChatColor.RED + "Occupation: " + ChatColor.WHITE + ChatColor.ITALIC + occupation.getDisplayName());
 		description.add(ChatColor.RED + "Level: " + ChatColor.WHITE + ChatColor.ITALIC + getLevel(occupation));
 		description.add(ChatColor.RED + "Experience: " + ChatColor.WHITE + ChatColor.ITALIC + getExperience(occupation) + "/" + getExperienceToNextLevel(occupation));
-		description.add(ChatColor.RED + "Occupation: " + ChatColor.WHITE + ChatColor.ITALIC + occupation.getDisplayName());
 		if(guild != null){
+			description.add(" ");
 			description.add(ChatColor.RED + "Guild: " + ChatColor.WHITE + ChatColor.ITALIC + getGuild().getName());
+			description.add(ChatColor.RED + "Rank: " + ChatColor.WHITE + ChatColor.ITALIC + getGuild().getRankName(getGuild().getPlayerRank(this)));
 		}
 		
 		hp.setDescription(description);

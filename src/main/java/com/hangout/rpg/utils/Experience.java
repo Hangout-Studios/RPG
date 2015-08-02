@@ -31,6 +31,10 @@ public class Experience {
 	}
 	
 	public int getExperience(){
+		return experience - getExpToLevel(level - 1);
+	}
+	
+	public int getTotalExperience(){
 		return experience;
 	}
 	
@@ -67,6 +71,6 @@ public class Experience {
 	}
 	
 	public int getExpToLevel(int level){
-		return ((10 * level) + (level * (level * 2)) * 100);
+		return ((level * (level * 2)) * 100);
 	}
 }

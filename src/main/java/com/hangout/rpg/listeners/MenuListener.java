@@ -18,7 +18,9 @@ import com.hangout.core.player.HangoutPlayer;
 import com.hangout.core.player.HangoutPlayerManager;
 import com.hangout.core.utils.mc.CommandPreparer;
 import com.hangout.rpg.guild.Guild;
+import com.hangout.rpg.guild.GuildBonusType;
 import com.hangout.rpg.guild.GuildManager;
+import com.hangout.rpg.guild.GuildRank;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
 import com.hangout.rpg.utils.RpgMenuUtils;
@@ -86,6 +88,27 @@ public class MenuListener implements Listener {
 			RpgPlayer rpgPlayer = RpgPlayerManager.getPlayer(e.getPlayer().getUUID());
 			
 			rpgPlayer.getGuild().removePlayer(rpgPlayer, rpgFriend, true);
+			
+			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), false);
+			return;
+		}
+		
+		if(itemTag.equals("guild_promote_player")){
+			UUID friendID = UUID.fromString(e.getPlayer().getOpenMenu().getTag().split("_")[0]);
+			RpgPlayer rpgFriend = RpgPlayerManager.getPlayer(friendID);
+			RpgPlayer rpgPlayer = RpgPlayerManager.getPlayer(e.getPlayer().getUUID());
+			
+			rpgPlayer.getGuild().setRank(rpgPlayer, rpgFriend, GuildRank.getNextRank(rpgFriend.getGuild().getPlayerRank(rpgFriend)), true);
+			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), false);
+			return;
+		}
+		
+		if(itemTag.equals("guild_demote_player")){
+			UUID friendID = UUID.fromString(e.getPlayer().getOpenMenu().getTag().split("_")[0]);
+			RpgPlayer rpgFriend = RpgPlayerManager.getPlayer(friendID);
+			RpgPlayer rpgPlayer = RpgPlayerManager.getPlayer(e.getPlayer().getUUID());
+			
+			rpgPlayer.getGuild().setRank(rpgPlayer, rpgFriend, GuildRank.getPreviousRank(rpgFriend.getGuild().getPlayerRank(rpgFriend)), false);
 			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), false);
 			return;
 		}
@@ -126,6 +149,31 @@ public class MenuListener implements Listener {
 			
 			RpgMenuUtils.createPlayerMenu(e.getPlayer(), HangoutPlayerManager.getPlayer(friendID)).openMenu(e.getPlayer(), false);
 			return;
+		}
+		
+		if(itemTag.equals("guild_boosters")){
+			RpgPlayer rpgPlayer = RpgPlayerManager.getPlayer(e.getPlayer().getUUID());
+			Guild g = rpgPlayer.getGuild();
+			RpgMenuUtils.createGuildBoostersMenu(e.getPlayer(), g).openMenu(e.getPlayer(), true);
+		}
+		
+		//guild_booster_activate_name
+		if(itemTag.startsWith("guild_booster_")){
+			String[] split = itemTag.split("_");
+			String action = split[2];
+			GuildBonusType type = GuildBonusType.valueOf(split[3]);
+			RpgPlayer p = RpgPlayerManager.getPlayer(e.getPlayer().getUUID());
+			Guild g = p.getGuild();
+			
+			if(action.equals("buy")){
+				if(g.buyBonus(type, p)){
+					RpgMenuUtils.createGuildBoostersMenu(e.getPlayer(), g).openMenu(e.getPlayer(), false);
+				}
+			}else if(action.equals("activate")){
+				if(g.activateBonus(type, p)){
+					RpgMenuUtils.createGuildBoostersMenu(e.getPlayer(), g).openMenu(e.getPlayer(), false);
+				}
+			}
 		}
 		
 		if(itemTag.startsWith("guild_menu_open_")){

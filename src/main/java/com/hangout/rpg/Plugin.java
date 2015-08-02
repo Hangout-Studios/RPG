@@ -14,6 +14,7 @@ import com.hangout.core.utils.lang.MessageManager;
 import com.hangout.rpg.commands.GuildCommand;
 import com.hangout.rpg.guild.GuildManager;
 import com.hangout.rpg.listeners.BattleListener;
+import com.hangout.rpg.listeners.BlockListener;
 import com.hangout.rpg.listeners.ChatListener;
 import com.hangout.rpg.listeners.LevelListener;
 import com.hangout.rpg.listeners.MenuListener;
@@ -39,6 +40,7 @@ public class Plugin extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
 		this.getServer().getPluginManager().registerEvents(new LevelListener(), this);
 		this.getServer().getPluginManager().registerEvents(new BattleListener(), this);
+		this.getServer().getPluginManager().registerEvents(new BlockListener(), this);
 		
 		this.getCommand("guild").setExecutor(new GuildCommand());
 		
@@ -46,7 +48,7 @@ public class Plugin extends JavaPlugin {
 		
 		//HangoutAPI.createMenuItem(Material.ARROW, "Friends list", Arrays.asList("Click to check out your friends"), 4 + 9, "friend_item");
 		
-		ChatManager.createChannel("guild", ChatColor.GREEN + "Guild", Arrays.asList("Only for guild members."), ChatChannelType.SERVER_WIDE, Material.BANNER, true, true);
+		ChatManager.createChannel("guild", "rpg", ChatColor.GREEN + "Guild", Arrays.asList("Only for guild members."), ChatChannelType.SERVER_WIDE, Material.BANNER, true, true);
 	}
 	
 	public void onDisable(){

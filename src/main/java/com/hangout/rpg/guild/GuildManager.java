@@ -15,6 +15,8 @@ import com.hangout.core.Config;
 import com.hangout.core.player.HangoutPlayer;
 import com.hangout.core.player.HangoutPlayerManager;
 import com.hangout.core.utils.database.Database;
+import com.hangout.core.utils.mc.DebugUtils;
+import com.hangout.core.utils.mc.DebugUtils.DebugMode;
 import com.hangout.rpg.Plugin;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
@@ -22,7 +24,6 @@ import com.hangout.rpg.player.RpgPlayerManager;
 public class GuildManager {
 	
 	public static HashMap<Integer, Guild> guilds = new HashMap<Integer, Guild>();
-	private static int nextID = 0;
 	
 	public static Guild getGuild(int id){
 		if(guilds.containsKey(id)){
@@ -40,50 +41,84 @@ public class GuildManager {
 		return null;
 	}
 	
-	public static void createGuild(String name, String tag, RpgPlayer p){
-		Guild g = new Guild(nextID, name, tag);
-		executeGuildUpdate(g, true);
-		executeGuildExperienceAction(g, 0, "INITIAL");
-		g.addPlayer(p, p, GuildRank.LEADER, true);
+	public static void addGuild(Guild g){
 		guilds.put(g.getID(), g);
-		nextID++;
+	}
+	
+	public static void createGuild(final String name, final String tag, final RpgPlayer p){
+		Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), new Runnable(){
+			@Override
+			public void run() {
+				
+				int guildID = 0;
+				try(PreparedStatement pst = Database.getConnection().prepareStatement(
+						"SELECT max(id) as id from " + Config.databaseName + ".guild")){
+					ResultSet rs = pst.executeQuery();
+					
+					if(rs.next()){
+						int id = rs.getInt("id");
+						if(!rs.wasNull()){
+							guildID = id + 1;
+						}
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				Guild g = new Guild(guildID, name, tag);
+				executeGuildUpdate(g, true);
+				executeGuildExperienceAction(g, 1, "INITIAL");
+				g.addPlayer(p, p, GuildRank.LEADER, true);
+				addGuild(g);
+			}
+		});
 	}
 	
 	public static void loadGuilds(){
 		
+		DebugUtils.sendDebugMessage("Loading guilds...", DebugMode.INFO);
+		
 		//Load all guilds
 		try(PreparedStatement pst = Database.getConnection().prepareStatement(
-				"SELECT max(t_action.action_id) as action_id, t_action.action as action, "
-				+ "t_action.player_member as player_id, v_players.name as player_name, "
-				+ "v_guilds.guild_name as guild_name, v_guilds.guild_tag as guild_tag, v_guilds.guild_id as guild_id, v_experience.experience " +
-				"FROM " + Config.databaseName + ".guildmember_action t_action " +
-				"JOIN( " +
-					"SELECT t_guilds.id as guild_id, t_guilds.is_active as active, t_guilds.guild_name as guild_name, t_guilds.guild_tag as guild_tag " +
-					"FROM " + Config.databaseName + ".guild t_guilds " +
-				") v_guilds ON(t_action.guild_id = v_guilds.guild_id) " +
-				"JOIN( " +
-					"SELECT t_players.name, t_players.uuid " +
-					"FROM " + Config.databaseName + ".players t_players " +
-				") v_players ON(t_action.player_member = v_players.uuid) " +
-				"JOIN( " +
-					"SELECT sum(t_experience.experience) as experience, t_experience.guild_id as id " +
-					"FROM server_hangout.guildexperience_action t_experience " +
-				") v_experience ON(t_action.guild_id = v_experience.id) " +
-				"WHERE v_guilds.active = 1 and (action = 'ADD_PLAYER' or action = 'REMOVE_PLAYER') " +
-				"GROUP BY v_players.name"
+				"SELECT max(t_action.action_id) as action_id, t_action.player_member as player_id, v_player.name as player_name, t_action.action as action, " +
+				"t_action.guild_id as guild_id, v_guild.name as guild_name, v_guild.tag as guild_tag, v_rank.rank_action as rank, " + 
+			    "sum(v_experience.experience) as guild_experience " +
+			"FROM " + Config.databaseName +".guildmember_action t_action " +
+			"JOIN( " +
+				"SELECT t_rank.action_id as rank_id, t_rank.player_member as player_rank_id, t_rank.action as rank_action " +
+			    "FROM " + Config.databaseName +".guildmember_action t_rank " +
+				"WHERE action != 'ADD_PLAYER' AND action != 'REMOVE_PLAYER' " +
+			    "GROUP BY player_rank_id " +
+			    "ORDER BY rank_id " +
+			") v_rank ON(t_action.player_member = v_rank.player_rank_id) " +
+			"JOIN( " +
+				"SELECT t_guild.id as id, t_guild.guild_name as name, t_guild.guild_tag as tag, t_guild.is_active as active " +
+			    "FROM " + Config.databaseName +".guild t_guild " +
+			") v_guild ON (t_action.guild_id = v_guild.id) " +
+			"INNER JOIN " + Config.databaseName +".guildexperience_action AS v_experience ON t_action.guild_id = v_experience.guild_id " +
+			"INNER JOIN " + Config.databaseName +".players AS v_player ON t_action.player_member = v_player.uuid " +
+			"WHERE v_guild.active = true AND (action = 'ADD_PLAYER' OR action = 'REMOVE_PLAYER') " +
+			"GROUP BY player_id " +
+			"ORDER BY action_id DESC"
 				)){
 			
 			ResultSet rs = pst.executeQuery();
 			while(rs.next()){
+				
 				final String guildName = rs.getString("guild_name");
+				final String guildTag = rs.getString("guild_tag");
+				final int guildID = rs.getInt("guild_id");
+				
 				if(GuildManager.getGuild(guildName) == null){
-					Guild g = new Guild(rs.getInt("guild_id"), guildName, rs.getString("guild_tag"));
+					Guild g = new Guild(guildID, guildName, guildTag);
 					g.addExperience(rs.getInt("guild_experience"), "DATABASE", false);
+					addGuild(g);
 					loadBonusses(g);
 				}
+				
 				if(rs.getString("action").equals("ADD_PLAYER")){
 					final UUID playerID = UUID.fromString(rs.getString("player_id"));
 					final String playerName = rs.getString("player_name");
+					final GuildRank rank = GuildRank.valueOf(rs.getString("rank").split("_")[1]);
 					Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), new Runnable(){
 						@Override
 						public void run() {
@@ -93,10 +128,11 @@ public class GuildManager {
 							}
 					
 							while(true){
-								if(p != null && p.isReadyLoading()){
-									RpgPlayer rpgP = RpgPlayerManager.getPlayer(playerID);
+								if(p.isReadyLoading()){
+									RpgPlayer rpgP = RpgPlayerManager.getPlayer(p.getUUID());
 									if(rpgP != null){
-										getGuild(guildName).addPlayer(rpgP, rpgP, GuildRank.NEWBIE, false);
+										getGuild(guildID).addPlayer(rpgP, rpgP, rank, false);
+										DebugUtils.sendDebugMessage("Added player " + p.getName() + " to guild " + guildTag, DebugMode.DEBUG);
 										break;
 									}
 								}
@@ -113,7 +149,6 @@ public class GuildManager {
 	}
 	
 	private static void loadBonusses(final Guild g){
-		//DebugUtils.sendDebugMessage("Loading guild: " + g.getName());
 		
 		//Bonuses
 		try (PreparedStatement pst = Database.getConnection().prepareStatement(
