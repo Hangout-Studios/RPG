@@ -13,6 +13,7 @@ import com.hangout.core.utils.mc.NumberUtils;
 import com.hangout.rpg.player.PlayerStat;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
+import com.hangout.rpg.utils.PlayerOccupations;
 
 public class BattleListener implements Listener {
 	
@@ -70,6 +71,8 @@ public class BattleListener implements Listener {
 		if(p == null || e.getEntity() instanceof Player) return;
 		
 		RpgPlayer rpgP = RpgPlayerManager.getPlayer(p.getUniqueId());
+		
+		rpgP.addExperience(2, true, "KILL_MOB_" + e.getEntity().getType().toString(), PlayerOccupations.WARRIOR);
 		
 		//Add reputation
 		//rpgP.getStats().getStat(PlayerStat.REPUTATION_ON_KILL);

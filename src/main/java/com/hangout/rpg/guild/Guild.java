@@ -29,7 +29,7 @@ public class Guild {
 	private String tag;
 	private int sizeLimit = 100;
 	private HashMap<RpgPlayer, GuildRank> players = new HashMap<RpgPlayer, GuildRank>();
-	private Experience experience = new Experience(this, 5);
+	private Experience experience = new Experience(this, null, 5);
 	private List<GuildBonus> bonusses = new ArrayList<GuildBonus>();
 	private HashMap<GuildRank, String> customRanks = new HashMap<GuildRank, String>();
 	

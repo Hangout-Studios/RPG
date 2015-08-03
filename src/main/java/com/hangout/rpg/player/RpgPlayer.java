@@ -30,7 +30,7 @@ public class RpgPlayer {
 		this.hp = hp;
 		
 		for(PlayerOccupations o : PlayerOccupations.values()){
-			experience.put(o, new Experience(this, 100));
+			experience.put(o, new Experience(this, o, 100));
 		}
 		
 		updateDescription();
@@ -47,7 +47,7 @@ public class RpgPlayer {
 		
 		Experience e = experience.get(o);
 		if(e == null){
-			e = new Experience(this, 100);
+			e = new Experience(this, o, 100);
 		}
 		e.addExperience(exp);
 		experience.put(o, e);

@@ -17,6 +17,6 @@ public class LevelListener implements Listener {
 		if(p == null) return;
 		
 		p.getWorld().playSound(p.getLocation(), Sound.ENDERDRAGON_DEATH, 1, 2);
-		p.sendMessage("You have leveled up to level " + e.getLevel() + "!");
+		p.sendMessage("You have leveled " + e.getOccupation().getDisplayName() + " to level " + e.getLevel() + "!");
 	}
 }

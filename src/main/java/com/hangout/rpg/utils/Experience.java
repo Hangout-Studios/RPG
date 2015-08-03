@@ -15,10 +15,12 @@ public class Experience {
 	private int maxLevel;
 	private int experience = 0;
 	private int level = 0; //Cache this value
+	private PlayerOccupations occupation = null;
 	
-	public Experience(Object parent, int maxLevel){
+	public Experience(Object parent, PlayerOccupations occupation, int maxLevel){
 		this.maxLevel = maxLevel;
 		this.parent = parent;
+		this.occupation = occupation;
 		addExperience(1);
 	}
 	
@@ -64,7 +66,7 @@ public class Experience {
 				if(parent instanceof Guild){
 					Bukkit.getPluginManager().callEvent(new GuildLevelUpEvent((Guild)parent, count));
 				}else if(parent instanceof RpgPlayer){
-					Bukkit.getPluginManager().callEvent(new PlayerLevelUpEvent((RpgPlayer)parent, count));
+					Bukkit.getPluginManager().callEvent(new PlayerLevelUpEvent((RpgPlayer)parent, occupation, count));
 				}
 			}
 		}

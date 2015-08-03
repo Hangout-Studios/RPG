@@ -16,9 +16,13 @@ import com.hangout.rpg.guild.GuildManager;
 import com.hangout.rpg.listeners.BattleListener;
 import com.hangout.rpg.listeners.BlockListener;
 import com.hangout.rpg.listeners.ChatListener;
+import com.hangout.rpg.listeners.CraftListener;
+import com.hangout.rpg.listeners.DurabilityListener;
+import com.hangout.rpg.listeners.FishingListener;
 import com.hangout.rpg.listeners.LevelListener;
 import com.hangout.rpg.listeners.MenuListener;
 import com.hangout.rpg.listeners.PlayerListener;
+import com.hangout.rpg.listeners.SmeltListener;
 import com.mysql.jdbc.StringUtils;
 
 public class Plugin extends JavaPlugin {
@@ -35,12 +39,21 @@ public class Plugin extends JavaPlugin {
 		
 		GuildManager.loadGuilds();
 		
-		this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-		this.getServer().getPluginManager().registerEvents(new MenuListener(), this);
-		this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
-		this.getServer().getPluginManager().registerEvents(new LevelListener(), this);
-		this.getServer().getPluginManager().registerEvents(new BattleListener(), this);
+
+
+
+		
 		this.getServer().getPluginManager().registerEvents(new BlockListener(), this);
+		this.getServer().getPluginManager().registerEvents(new BattleListener(), this);
+		this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
+		this.getServer().getPluginManager().registerEvents(new CraftListener(), this);
+		this.getServer().getPluginManager().registerEvents(new DurabilityListener(), this);
+		this.getServer().getPluginManager().registerEvents(new FishingListener(), this);
+		this.getServer().getPluginManager().registerEvents(new LevelListener(), this);
+		this.getServer().getPluginManager().registerEvents(new MenuListener(), this);
+		this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+		this.getServer().getPluginManager().registerEvents(new SmeltListener(), this);
+		
 		
 		this.getCommand("guild").setExecutor(new GuildCommand());
 		

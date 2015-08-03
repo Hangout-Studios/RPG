@@ -3,7 +3,8 @@ package com.hangout.rpg.utils;
 public enum PlayerRaces {
 	HUMAN("Human"),
 	DWARF("Dwarf"),
-	ELF("Elf");
+	ELF("Elf"),
+	GNOME("Gnome");
 	
 	String displayName;
 	PlayerRaces(String displayName){

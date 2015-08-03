@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import com.hangout.core.utils.mc.DebugUtils;
 import com.hangout.core.utils.mc.DebugUtils.DebugMode;
+import com.hangout.rpg.utils.PlayerOccupations;
 import com.hangout.rpg.utils.PlayerRaces;
 
 public class PlayerStats {
@@ -24,6 +25,16 @@ public class PlayerStats {
 		addStat(PlayerStat.HEALTH, 20);
 		addStat(PlayerStat.DAMAGE_MELEE, 2);
 		addStat(PlayerStat.DAMAGE_RANGED, 2);
+		addStat(PlayerStat.AXE_DURABILITY, 100);
+		addStat(PlayerStat.PICKAXE_DURABILITY, 100);
+		addStat(PlayerStat.SPADE_DURABILITY, 100);
+		addStat(PlayerStat.FISHINGROD_DURABILITY, 100);
+		addStat(PlayerStat.CRAFT_BUILDING_AMOUNT, 100);
+		addStat(PlayerStat.CRAFT_MECHANICS_AMOUNT, 100);
+		addStat(PlayerStat.DROP_AMOUNT_CROP, 100);
+		addStat(PlayerStat.DROP_AMOUNT_ORE, 100);
+		addStat(PlayerStat.FISHING_CATCH_AMOUNT, 100);
+		addStat(PlayerStat.COOK_INCREASE_AMOUNT, 100);
 		
 		if(p.getRace() == PlayerRaces.DWARF){
 			addStat(PlayerStat.HEALTH, 4);
@@ -32,13 +43,26 @@ public class PlayerStats {
 			
 		}else if(p.getRace() == PlayerRaces.ELF){
 			addStat(PlayerStat.DAMAGE_RANGED, 2);
-			addStat(PlayerStat.MOVESPEED, 10);
+			addStat(PlayerStat.DROP_AMOUNT_BUILD_MATERIAL, 50);
+			addStat(PlayerStat.DROP_INCREASE_BUILD_MATERIAL, 100);
 			
 		}else if(p.getRace() == PlayerRaces.HUMAN){
 			addStat(PlayerStat.DAMAGE_MELEE, 2);
 			addStat(PlayerStat.DROP_INCREASE_CROP, 50);
 			addStat(PlayerStat.DROP_AMOUNT_CROP, 2);
+			
+		} else if(p.getRace() == PlayerRaces.GNOME){
+			addStat(PlayerStat.MOVESPEED, 10);
+			addStat(PlayerStat.CRAFT_BUILDING_CHANCE, 50);
+			addStat(PlayerStat.CRAFT_BUILDING_AMOUNT, 100);
 		}
+		
+		PlayerOccupations occupation = p.getOccupation();
+		int occupationLevel = p.getLevel(occupation);
+		occupation.addStat(this, occupationLevel);
+		
+		//Equipment
+		
 	}
 	
 	public void apply(){
@@ -50,7 +74,7 @@ public class PlayerStats {
 		DebugUtils.sendDebugMessage("Stats applied to " + p.getName(), DebugMode.DEBUG);
 	}
 	
-	private void addStat(PlayerStat stat, int value){
+	public void addStat(PlayerStat stat, int value){
 		int i = 0;
 		if(stats.containsKey(stat)){
 			i = stats.get(stat);

@@ -11,6 +11,7 @@ import com.hangout.core.utils.mc.NumberUtils;
 import com.hangout.rpg.player.PlayerStat;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
+import com.hangout.rpg.utils.PlayerOccupations;
 
 public class FishingListener implements Listener {
 	
@@ -25,12 +26,14 @@ public class FishingListener implements Listener {
 		if(type == EntityType.DROPPED_ITEM){
 			ItemStack item = (ItemStack)caught;
 			
+			p.addExperience(2, true, "CATCH_FISH_" + type.toString(), PlayerOccupations.FISHERMAN);
+			
 			if(NumberUtils.rollPercentage(p.getStats().getStat(PlayerStat.FISHING_SPECIAL_CATCH))){
 				//replace item with something else!
 			}
 			
 			if(NumberUtils.rollPercentage(p.getStats().getStat(PlayerStat.FISHING_CATCH_INCREASE))){
-				item.setAmount(item.getAmount() * p.getStats().getStat(PlayerStat.FISHING_CATCH_AMOUNT));
+				item.setAmount(NumberUtils.multiplyByPercentage(item.getAmount(), p.getStats().getStat(PlayerStat.FISHING_CATCH_AMOUNT)));
 			}
 		}
 	}

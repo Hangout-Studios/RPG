@@ -78,7 +78,7 @@ public class RpgPlayerManager {
 			pst.setString(1, p.getHangoutPlayer().getUUID().toString());
 			ResultSet rs = pst.executeQuery();
 			
-			PlayerOccupations occupation = PlayerOccupations.ADVENTURER;
+			PlayerOccupations occupation = PlayerOccupations.WARRIOR;
 			if(rs.first()){
 				occupation = PlayerOccupations.valueOf(rs.getString("occupation"));
 			}else{
