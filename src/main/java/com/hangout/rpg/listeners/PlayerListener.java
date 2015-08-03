@@ -4,10 +4,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import com.hangout.core.events.PlayerDataReleaseEvent;
 import com.hangout.core.events.PlayerJoinCompleteEvent;
 import com.hangout.core.events.PlayerPostLoadEvent;
 import com.hangout.core.events.PlayerPreSaveEvent;
-import com.hangout.core.events.PlayerQuitCompleteEvent;
 import com.hangout.core.player.CommonPlayerManager;
 import com.hangout.core.utils.mc.DebugUtils;
 import com.hangout.core.utils.mc.DebugUtils.DebugMode;
@@ -20,11 +20,11 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinCompleteEvent e){
-		
+		RpgPlayerManager.getPlayer(e.getUUID()).updateStats();
 	}
 	
 	@EventHandler
-	public void onPlayerQuit(PlayerQuitCompleteEvent e){
+	public void onPlayerDataRelease(PlayerDataReleaseEvent e){
 		RpgPlayerManager.removePlayer(e.getUUID());
 	}
 	

@@ -87,8 +87,8 @@ public class GuildManager {
 				"SELECT t_rank.action_id as rank_id, t_rank.player_member as player_rank_id, t_rank.action as rank_action " +
 			    "FROM " + Config.databaseName +".guildmember_action t_rank " +
 				"WHERE action != 'ADD_PLAYER' AND action != 'REMOVE_PLAYER' " +
-			    "GROUP BY player_rank_id " +
-			    "ORDER BY rank_id " +
+			    "GROUP BY rank_id " +
+			    "ORDER BY rank_id DESC" +
 			") v_rank ON(t_action.player_member = v_rank.player_rank_id) " +
 			"JOIN( " +
 				"SELECT t_guild.id as id, t_guild.guild_name as name, t_guild.guild_tag as tag, t_guild.is_active as active " +

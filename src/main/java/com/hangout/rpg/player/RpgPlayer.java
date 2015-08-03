@@ -24,6 +24,7 @@ public class RpgPlayer {
 	private PlayerOccupations occupation = PlayerOccupations.WARRIOR;
 	private List<PlayerOccupations> unlockedOccupations = new ArrayList<PlayerOccupations>();
 	private Guild guild = null;
+	private PlayerStats stats = new PlayerStats(this);
 
 	public RpgPlayer(HangoutPlayer hp) {
 		this.hp = hp;
@@ -152,5 +153,14 @@ public class RpgPlayer {
 		}
 		
 		hp.setDescription(description);
+	}
+	
+	public void updateStats(){
+		stats.update();
+		stats.apply();
+	}
+	
+	public PlayerStats getStats(){
+		return stats;
 	}
 }

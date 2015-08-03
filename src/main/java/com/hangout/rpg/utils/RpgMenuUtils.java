@@ -175,7 +175,7 @@ public class RpgMenuUtils {
 				description.add("In guild stock: " + g.getBoosterAmount(type));
 				description.add(" ");
 				description.addAll(type.getDescription());
-				MenuUtils.createMenuItem(boosterMenu, type.getMaterial(), type.getDisplayName(), description, count, "guild_booster_" + type.toString());
+				MenuUtils.createMenuItem(boosterMenu, type.getMaterial(), type.getDisplayName(), description, count, "guild_booster_info_" + type.toString());
 				MenuUtils.createMenuItem(boosterMenu, Material.GOLD_INGOT, "Buy booster - " + type.getDisplayName(), Arrays.asList("Price: " + type.getPrice() + "G", " ", "The guild leader or an officer", "can activate the booster."), count + 9, "guild_booster_buy_" + type.toString());
 				
 				if(g.getPlayerRank(rpgPlayer).getRank() >= 3){
