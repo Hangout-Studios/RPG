@@ -6,3 +6,6 @@ commands:
   guild:
     description: Commands that are used for managing guilds
     usage: "/guild"
+  rpgtext:
+    description: Commands that are used with clickable text
+    usage: "/text"

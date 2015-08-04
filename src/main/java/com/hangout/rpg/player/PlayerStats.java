@@ -31,10 +31,12 @@ public class PlayerStats {
 		addStat(PlayerStat.FISHINGROD_DURABILITY, 100);
 		addStat(PlayerStat.CRAFT_BUILDING_AMOUNT, 100);
 		addStat(PlayerStat.CRAFT_MECHANICS_AMOUNT, 100);
+		addStat(PlayerStat.CRAFT_BLACKSMITH_AMOUNT, 100);
 		addStat(PlayerStat.DROP_AMOUNT_CROP, 100);
 		addStat(PlayerStat.DROP_AMOUNT_ORE, 100);
 		addStat(PlayerStat.FISHING_CATCH_AMOUNT, 100);
 		addStat(PlayerStat.COOK_INCREASE_AMOUNT, 100);
+		addStat(PlayerStat.SMELT_INCREASE_AMOUNT, 100);
 		
 		if(p.getRace() == PlayerRaces.DWARF){
 			addStat(PlayerStat.HEALTH, 4);
@@ -49,7 +51,7 @@ public class PlayerStats {
 		}else if(p.getRace() == PlayerRaces.HUMAN){
 			addStat(PlayerStat.DAMAGE_MELEE, 2);
 			addStat(PlayerStat.DROP_INCREASE_CROP, 50);
-			addStat(PlayerStat.DROP_AMOUNT_CROP, 2);
+			addStat(PlayerStat.DROP_AMOUNT_CROP, 100);
 			
 		} else if(p.getRace() == PlayerRaces.GNOME){
 			addStat(PlayerStat.MOVESPEED, 10);
@@ -71,7 +73,7 @@ public class PlayerStats {
 		p.setMaxHealth(getStat(PlayerStat.HEALTH));
 		p.setWalkSpeed(p.getWalkSpeed() * (1 + (getStat(PlayerStat.MOVESPEED) / 100)));
 		
-		DebugUtils.sendDebugMessage("Stats applied to " + p.getName(), DebugMode.DEBUG);
+		DebugUtils.sendDebugMessage("Stats applied to " + p.getName(), DebugMode.EXTENSIVE);
 	}
 	
 	public void addStat(PlayerStat stat, int value){

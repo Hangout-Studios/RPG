@@ -53,15 +53,16 @@ public class RpgPlayerManager {
 		});
 	}
 	
-	public static void commitExperienceAction(final RpgPlayer player, final String source, final int experience){
+	public static void commitExperienceAction(final RpgPlayer player, final String source, final PlayerOccupations o, final int experience){
 		Bukkit.getScheduler().runTaskAsynchronously(Plugin.getInstance(), new Runnable(){
 			@Override
 			public void run() {
 				try(PreparedStatement pst = Database.getConnection().prepareStatement(
-		    			"INSERT INTO " + Config.databaseName + ".experience_action (player_id, experience, source) VALUES (?, ?, ?)")){
+		    			"INSERT INTO " + Config.databaseName + ".experience_action (player_id, experience, source, occupation) VALUES (?, ?, ?, ?)")){
 					pst.setString(1, player.getHangoutPlayer().getUUID().toString());
 					pst.setInt(2, experience);
 					pst.setString(3, source);
+					pst.setString(4, o.toString());
 		    		pst.execute();
 		    		pst.close();
 		    	} catch (SQLException e) {

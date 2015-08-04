@@ -10,6 +10,7 @@ import com.hangout.core.utils.mc.NumberUtils;
 import com.hangout.rpg.player.PlayerStat;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
+import com.hangout.rpg.utils.ExperienceTable;
 import com.hangout.rpg.utils.PlayerOccupations;
 
 public class BlockListener implements Listener {
@@ -19,7 +20,7 @@ public class BlockListener implements Listener {
 		RpgPlayer p = RpgPlayerManager.getPlayer(e.getPlayer().getUniqueId());
 		
 		if(ItemUtils.isCrop(e.getBlock().getType())){
-			p.addExperience(1, true, "HARVEST_CROP_" + e.getBlock().getType().toString(), PlayerOccupations.FARMER);
+			p.addExperience(ExperienceTable.getGatheringExperience(e.getBlock().getType()), true, "HARVEST_CROP_" + e.getBlock().getType().toString(), PlayerOccupations.FARMER);
 			
 			if(NumberUtils.rollPercentage(p.getStats().getStat(PlayerStat.DROP_INCREASE_CROP))){
 				for(ItemStack item : e.getBlock().getDrops(e.getPlayer().getItemInHand())){
@@ -31,7 +32,7 @@ public class BlockListener implements Listener {
 		}
 		
 		if(ItemUtils.isOre(e.getBlock().getType())){
-			p.addExperience(4, true, "MINE_ORE_" + e.getBlock().getType().toString(), PlayerOccupations.MINER);
+			p.addExperience(ExperienceTable.getGatheringExperience(e.getBlock().getType()), true, "MINE_ORE_" + e.getBlock().getType().toString(), PlayerOccupations.MINER);
 			
 			if(NumberUtils.rollPercentage(p.getStats().getStat(PlayerStat.DROP_INCREASE_ORE))){
 				for(ItemStack item : e.getBlock().getDrops(e.getPlayer().getItemInHand())){
@@ -43,7 +44,7 @@ public class BlockListener implements Listener {
 		}
 		
 		if(ItemUtils.isBuildingMaterial(e.getBlock().getType())){
-			p.addExperience(4, true, "GATHER_BLOCK_" + e.getBlock().getType().toString(), PlayerOccupations.GATHERER);
+			p.addExperience(ExperienceTable.getGatheringExperience(e.getBlock().getType()), true, "GATHER_BLOCK_" + e.getBlock().getType().toString(), PlayerOccupations.GATHERER);
 			
 			if(NumberUtils.rollPercentage(p.getStats().getStat(PlayerStat.DROP_INCREASE_BUILD_MATERIAL))){
 				for(ItemStack item : e.getBlock().getDrops(e.getPlayer().getItemInHand())){

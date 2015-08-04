@@ -12,12 +12,14 @@ import com.hangout.core.utils.database.Database;
 import com.hangout.core.utils.database.Database.PropertyTypes;
 import com.hangout.core.utils.lang.MessageManager;
 import com.hangout.rpg.commands.GuildCommand;
+import com.hangout.rpg.commands.TextCommand;
 import com.hangout.rpg.guild.GuildManager;
 import com.hangout.rpg.listeners.BattleListener;
 import com.hangout.rpg.listeners.BlockListener;
 import com.hangout.rpg.listeners.ChatListener;
 import com.hangout.rpg.listeners.CraftListener;
 import com.hangout.rpg.listeners.DurabilityListener;
+import com.hangout.rpg.listeners.EntityInteractListener;
 import com.hangout.rpg.listeners.FishingListener;
 import com.hangout.rpg.listeners.LevelListener;
 import com.hangout.rpg.listeners.MenuListener;
@@ -36,12 +38,9 @@ public class Plugin extends JavaPlugin {
 		messageBundle = new MessageManager(getConfig().getString("locale", "en"));
 		
 		this.saveDefaultConfig();
+		Config.loadData();
 		
 		GuildManager.loadGuilds();
-		
-
-
-
 		
 		this.getServer().getPluginManager().registerEvents(new BlockListener(), this);
 		this.getServer().getPluginManager().registerEvents(new BattleListener(), this);
@@ -53,13 +52,12 @@ public class Plugin extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new MenuListener(), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		this.getServer().getPluginManager().registerEvents(new SmeltListener(), this);
-		
+		this.getServer().getPluginManager().registerEvents(new EntityInteractListener(), this);
 		
 		this.getCommand("guild").setExecutor(new GuildCommand());
+		this.getCommand("rpgtext").setExecutor(new TextCommand());
 		
 		Database.addCustomPlayerProperty("race", PropertyTypes.STRING);
-		
-		//HangoutAPI.createMenuItem(Material.ARROW, "Friends list", Arrays.asList("Click to check out your friends"), 4 + 9, "friend_item");
 		
 		ChatManager.createChannel("guild", "rpg", ChatColor.GREEN + "Guild", Arrays.asList("Only for guild members."), ChatChannelType.SERVER_WIDE, Material.BANNER, true, true);
 	}

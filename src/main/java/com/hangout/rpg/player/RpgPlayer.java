@@ -53,7 +53,7 @@ public class RpgPlayer {
 		experience.put(o, e);
 		
 		if(commitToDatabase){
-			RpgPlayerManager.commitExperienceAction(this, source, exp);
+			RpgPlayerManager.commitExperienceAction(this, source, o, exp);
 		}
 		updateDescription();
 		
@@ -112,6 +112,7 @@ public class RpgPlayer {
 		this.occupation = occupation;
 		if(commitToDatabase){
 			RpgPlayerManager.commitOccupationAction(this, OccupationAction.SWITCH, occupation);
+			updateStats();
 		}
 		updateDescription();
 		
