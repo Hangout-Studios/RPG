@@ -3,6 +3,7 @@ package com.hangout.rpg.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerExpChangeEvent;
 
 import com.hangout.core.events.PlayerDataReleaseEvent;
 import com.hangout.core.events.PlayerJoinCompleteEvent;
@@ -21,6 +22,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinCompleteEvent e){
 		RpgPlayerManager.getPlayer(e.getUUID()).updateStats();
+		RpgPlayerManager.getPlayer(e.getUUID()).swapExperienceBar();
 	}
 	
 	@EventHandler
@@ -64,5 +66,16 @@ public class PlayerListener implements Listener {
 	public void onPlayerPreSave(PlayerPreSaveEvent e){
 		RpgPlayer rp = RpgPlayerManager.getPlayer(e.getPlayer().getUUID());
 		e.saveSecondaryProperty("race", rp.getRace().toString());
+	}
+	
+	@EventHandler
+	public void onPlayerExpChange(PlayerExpChangeEvent e) {
+	    int xp = e.getAmount();
+	    RpgPlayer p = RpgPlayerManager.getPlayer(e.getPlayer().getUniqueId());
+	    p.addBaseExperience(xp);
+	    
+	    if(p.usingCustomExp()){
+	    	e.setAmount(0);
+	    }
 	}
 }

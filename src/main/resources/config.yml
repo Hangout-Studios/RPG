@@ -261,3 +261,125 @@ Experience_Table:
   - "WITCH=100"
   - "WOLF=8"
   - "ZOMBIE=12"
+Custom_Items:
+#	JUNK(ChatColor.GRAY),
+#	COMMON(ChatColor.WHITE),
+#	UNCOMMON(ChatColor.GREEN),
+#	RARE(ChatColor.BLUE),
+#	MYTHIC(ChatColor.DARK_PURPLE),
+#	LEGENDARY(ChatColor.GOLD);
+  acacia_door_item:
+    Material: 'ACACIA_DOOR_ITEM'
+    Name: 'Acacia door'
+    Description:
+    - "A door made from Acacia."
+    - "Opens with a nice squeek."
+    Replace_Default: true
+  acacia_fence:
+    Material: 'DIRT'
+    Name: 'Acacia fence'
+    Description:
+    - "Fence made from Acacia."
+    Replace_Default: true
+  acacia_fence_gate:
+    Material: 'ACACIA_FENCE_GATE'
+    Name: 'Acacia Fence Gate'
+    Description:
+    - "An Acacia gate that fits"
+    - "nicely inbetween fence."
+    Replace_Default: true
+  acacia_stairs:
+    Material: 'ACACIA_STAIRS'
+    Name: 'Acacia Stairs'
+    Description:
+    - "Wooden stairs made from"
+    - "Acacia planks."
+    Replace_Default: true
+  activator_rail:
+    Material: 'ACTIVATOR_RAIL'
+    Name: 'Activator Rail'
+    Description:
+    - "Modified minecart rails with"
+    - "varying effecs depending on"
+    - "the minecart that activates it."
+    Replace_Default: true
+  anvil:
+    Material: 'ANVIL'
+    Name: 'Standard Anvil'
+    Description:
+    - "A common anvil used by"
+    - "blacksmiths to repair"
+    - "equipment."
+    Replace_Default: true
+  apple:
+    Material: 'APPLE'
+    Name: 'Apple'
+    Description:
+    - "Not too soft, not too"
+    - "hard and juicy as you"
+    - "bite into it!"
+    Replace_Default: true
+  armor_stand:
+    Material: 'ARMOR_STAND'
+    Name: 'Armor Stand'
+    Description:
+    - "Display your past adventures"
+    - "on these stands!"
+    Replace_Default: true
+  arrow:
+    Material: 'ARROW'
+    Name: 'Iron Arrow'
+    Description:
+    - "Very commonly seen with"
+    - "and used by archers around"
+    - "the world."
+    Replace_Default: true
+  baked_potato:
+    Material: 'BAKED_POTATO'
+    Name: 'Baked Potato'
+    Description:
+    - "Also known as jacket potato,"
+    - "these potatoes are baked"
+    - "which makes them fluffy on the"
+    - "inside and crispy on the outside."
+    Replace_Default: true
+  banner:
+    Material: 'BANNER'
+    Name: 'Banner'
+    Description:
+    - "Show your affiliation from"
+    - "afar with these huge banners."
+    Replace_Default: true
+  beacon:
+    Material: 'BEACON'
+    Name: 'Beacon'
+    Description:
+    - "A position marked with this"
+    - "can be found from anywhere"
+    - "with a clear sky."
+    Replace_Default: true
+  bed:
+    Material: 'BED'
+    Name: 'Simple Bed'
+    Description:
+    - "Nice and fluffy!"
+    - "Doesn't work as trampoline,"
+    - "sadly enough..."
+    Replace_Default: true
+  birch_door_item:
+    Material: 'BIRCH_DOOR_ITEM'
+    Name: 'Birch Door'
+    Description:
+    - "Also known as jacket potato,"
+    - "these potatoes are baked"
+    - "which makes them fluffy on the"
+    - "inside and crispy on the outside."
+    Replace_Default: true
+  dirt:
+    Material: 'DIRT'
+    Name: 'Dirt'
+    Description:
+    - "Found everywhere around"
+    - "the world, like under"
+    - "your boot!"
+    Replace_Default: true

@@ -18,6 +18,7 @@ import com.hangout.rpg.guild.GuildBonusType;
 import com.hangout.rpg.guild.GuildRank;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
+import com.hangout.rpg.player.PlayerStats.PlayerStatTypes;
 
 public class RpgMenuUtils {
 	
@@ -105,6 +106,11 @@ public class RpgMenuUtils {
 			}else{
 				MenuUtils.createMenuItem(friendMenu, Material.BARRIER, "No guild", Arrays.asList("You're not in a guild.", "Ask around to join one!"), locationGuild, "guild_no_guild");
 			}
+			
+			//Stats			
+			MenuUtils.createMenuItem(friendMenu, Material.WOOD_SWORD, "Combat stats", rpgPlayer.getStats().getStats(PlayerStatTypes.COMBAT), locationOccupations + 8, "stats_combat");
+			MenuUtils.createMenuItem(friendMenu, Material.SAPLING, "Gathering stats", rpgPlayer.getStats().getStats(PlayerStatTypes.GATHERING), locationOccupations + 9, "stats_gathering");
+			MenuUtils.createMenuItem(friendMenu, Material.WORKBENCH, "Crafting stats", rpgPlayer.getStats().getStats(PlayerStatTypes.CRAFTING), locationOccupations + 10, "stats_crafting");
 		}
 		
 		MenuUtils.createMenuItem(friendMenu, Material.SKULL_ITEM, friend.getDisplayName(), friend.getDescription(), locationProfile, "icon_friend");

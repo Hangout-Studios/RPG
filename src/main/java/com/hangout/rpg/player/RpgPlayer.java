@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import com.hangout.core.player.HangoutPlayer;
 import com.hangout.core.utils.mc.DebugUtils;
@@ -25,6 +26,9 @@ public class RpgPlayer {
 	private List<PlayerOccupations> unlockedOccupations = new ArrayList<PlayerOccupations>();
 	private Guild guild = null;
 	private PlayerStats stats = new PlayerStats(this);
+	private int baseExperience = 0;
+	
+	private boolean useCustomExperience = false;
 
 	public RpgPlayer(HangoutPlayer hp) {
 		this.hp = hp;
@@ -56,20 +60,13 @@ public class RpgPlayer {
 			RpgPlayerManager.commitExperienceAction(this, source, o, exp);
 		}
 		updateDescription();
+		updateExperienceBar();
 		
 		DebugUtils.sendDebugMessage(hp.getName() + " gained " + exp + " experience from " + source, DebugMode.DEBUG);
 	}
 	
-	public int getExperience(PlayerOccupations o){
-		return experience.get(o).getExperience();
-	}
-	
-	public int getLevel(PlayerOccupations o){
-		return experience.get(o).getLevel();
-	}
-	
-	public int getExperienceToNextLevel(PlayerOccupations o){
-		return experience.get(o).getExpToNextLevel();
+	public Experience getExperience(PlayerOccupations o){
+		return experience.get(o);
 	}
 	
 	public PlayerRaces getRace(){
@@ -136,7 +133,7 @@ public class RpgPlayer {
 		List<String> list = new ArrayList<String>();
 		for(PlayerOccupations o : experience.keySet()){
 			list.add(ChatColor.RED + o.getDisplayName() + ChatColor.WHITE + " level " + 
-					getLevel(o) + " - Exp " + getExperience(o) + "/" + getExperienceToNextLevel(o));
+					getExperience(o).getLevel() + " - Exp " + getExperience(o).getExperience() + "/" + getExperience(o).getExpToNextLevel());
 		}
 		return list;
 	}
@@ -145,8 +142,8 @@ public class RpgPlayer {
 		List<String> description = new ArrayList<String>();
 		description.add(ChatColor.RED + "Race: " + ChatColor.WHITE + ChatColor.ITALIC + race.getDisplayName());
 		description.add(ChatColor.RED + "Occupation: " + ChatColor.WHITE + ChatColor.ITALIC + occupation.getDisplayName());
-		description.add(ChatColor.RED + "Level: " + ChatColor.WHITE + ChatColor.ITALIC + getLevel(occupation));
-		description.add(ChatColor.RED + "Experience: " + ChatColor.WHITE + ChatColor.ITALIC + getExperience(occupation) + "/" + getExperienceToNextLevel(occupation));
+		description.add(ChatColor.RED + "Level: " + ChatColor.WHITE + ChatColor.ITALIC + getExperience(occupation).getLevel());
+		description.add(ChatColor.RED + "Experience: " + ChatColor.WHITE + ChatColor.ITALIC + getExperience(occupation).getExperience() + "/" + getExperience(occupation).getExpToNextLevel());
 		if(guild != null){
 			description.add(" ");
 			description.add(ChatColor.RED + "Guild: " + ChatColor.WHITE + ChatColor.ITALIC + getGuild().getName());
@@ -163,5 +160,44 @@ public class RpgPlayer {
 	
 	public PlayerStats getStats(){
 		return stats;
+	}
+	
+	public void swapExperienceBar(){
+		
+		Player p = hp.getPlayer();
+		
+		if(useCustomExperience){
+			useCustomExperience = false;
+			
+			//Switch to base
+			p.setTotalExperience(baseExperience);
+			
+		}else{
+			useCustomExperience = true;
+			
+			//Switch to custom			
+			baseExperience = p.getTotalExperience();
+			updateExperienceBar();
+		}
+	}
+	
+	public void updateExperienceBar(){
+		if(!useCustomExperience) return;
+		
+		Experience exp = getExperience(getOccupation());
+		Player p = hp.getPlayer();
+		
+		p.sendMessage("Exp: " + ((float)exp.getExperience() / exp.getExpToNextLevel()));
+		
+		p.setLevel(exp.getLevel());
+		p.setExp((float)exp.getExperience() / exp.getExpToNextLevel());
+	}
+
+	public void addBaseExperience(int xp) {
+		baseExperience += xp;
+	}
+	
+	public boolean usingCustomExp(){
+		return useCustomExperience;
 	}
 }

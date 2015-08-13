@@ -21,6 +21,7 @@ import com.hangout.rpg.listeners.CraftListener;
 import com.hangout.rpg.listeners.DurabilityListener;
 import com.hangout.rpg.listeners.EntityInteractListener;
 import com.hangout.rpg.listeners.FishingListener;
+import com.hangout.rpg.listeners.InventoryListener;
 import com.hangout.rpg.listeners.LevelListener;
 import com.hangout.rpg.listeners.MenuListener;
 import com.hangout.rpg.listeners.PlayerListener;
@@ -53,6 +54,7 @@ public class Plugin extends JavaPlugin {
 		this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		this.getServer().getPluginManager().registerEvents(new SmeltListener(), this);
 		this.getServer().getPluginManager().registerEvents(new EntityInteractListener(), this);
+		this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 		
 		this.getCommand("guild").setExecutor(new GuildCommand());
 		this.getCommand("rpgtext").setExecutor(new TextCommand());

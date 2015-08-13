@@ -62,10 +62,12 @@ public class Experience {
 		if(i > level){
 			this.level = i;
 			DebugUtils.sendDebugMessage("Level updated to " + i, DebugMode.DEBUG);
-			for(int count = level; count < i; count++){
+			for(int count = level; count <= i; count++){
 				if(parent instanceof Guild){
 					Bukkit.getPluginManager().callEvent(new GuildLevelUpEvent((Guild)parent, count));
 				}else if(parent instanceof RpgPlayer){
+					RpgPlayer p = (RpgPlayer)parent;
+					if(!p.getHangoutPlayer().isOnline()) return;
 					Bukkit.getPluginManager().callEvent(new PlayerLevelUpEvent((RpgPlayer)parent, occupation, count));
 				}
 			}

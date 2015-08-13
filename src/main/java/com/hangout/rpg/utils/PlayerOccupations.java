@@ -182,6 +182,7 @@ public enum PlayerOccupations {
 			case 5:
 				stats.addStat(PlayerStat.HEALTH, 1);
 				stats.addStat(PlayerStat.POISON_CHANCE, 9);
+				stats.addStat(PlayerStat.POISON_DURATION, 1);
 				break;
 			case 6:
 			case 7:
@@ -195,6 +196,7 @@ public enum PlayerOccupations {
 				stats.addStat(PlayerStat.DAMAGE_RANGED, 1);
 				stats.addStat(PlayerStat.REPUTATION_ON_KILL, 1);
 				stats.addStat(PlayerStat.POISON_CHANCE, 7);
+				stats.addStat(PlayerStat.POISON_DURATION, 1);
 				break;
 			case 11:
 			case 12:
@@ -212,6 +214,7 @@ public enum PlayerOccupations {
 				stats.addStat(PlayerStat.DAMAGE_MELEE, 1);
 				stats.addStat(PlayerStat.DAMAGE_RANGED, 1);
 				stats.addStat(PlayerStat.POISON_CHANCE, 2);
+				stats.addStat(PlayerStat.POISON_DURATION, 1);
 				break;
 			case 21:
 			case 22:
@@ -224,6 +227,7 @@ public enum PlayerOccupations {
 			case 29:
 			case 30:
 				stats.addStat(PlayerStat.POISON_CHANCE, 2);
+				stats.addStat(PlayerStat.POISON_DURATION, 2);
 				break;
 			}
 		} else if(this == PlayerOccupations.FISHERMAN){
@@ -318,7 +322,7 @@ public enum PlayerOccupations {
 				break;
 			case 20:
 				stats.addStat(PlayerStat.DROP_INCREASE_CROP, 2);
-				stats.addStat(PlayerStat.DROP_AMOUNT_CROP, 50);
+				stats.addStat(PlayerStat.DROP_AMOUNT_CROP, 100);
 				break;
 			case 21:
 			case 22:
@@ -333,7 +337,7 @@ public enum PlayerOccupations {
 				break;
 			case 30:
 				stats.addStat(PlayerStat.DROP_INCREASE_CROP, 2);
-				stats.addStat(PlayerStat.DROP_AMOUNT_CROP, 50);
+				stats.addStat(PlayerStat.DROP_AMOUNT_CROP, 100);
 				break;
 			}
 		}else if (this == PlayerOccupations.MINER){

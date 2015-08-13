@@ -30,8 +30,6 @@ public class SmeltListener implements Listener {
 		ItemStack result = e.getResult();
 		ItemStack source = e.getSource();
 		
-		
-		
 		if(ItemUtils.isFood(result.getType())){
 			p.addExperience(ExperienceTable.getCraftingExperience(result.getType()), true, "COOK_FOOD_" + source.getType().toString(), PlayerOccupations.COOK);
 			if(NumberUtils.rollPercentage(p.getStats().getStat(PlayerStat.COOK_INCREASE_CHANCE))){
