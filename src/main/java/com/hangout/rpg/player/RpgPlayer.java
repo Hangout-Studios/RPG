@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import com.hangout.core.player.HangoutPlayer;
 import com.hangout.core.utils.mc.DebugUtils;
 import com.hangout.core.utils.mc.DebugUtils.DebugMode;
+import com.hangout.core.utils.scoreboard.Displayboard;
+import com.hangout.core.utils.scoreboard.DisplayboardManager;
 import com.hangout.rpg.guild.Guild;
 import com.hangout.rpg.guild.GuildBonusType;
 import com.hangout.rpg.utils.Experience;
@@ -26,7 +28,8 @@ public class RpgPlayer {
 	private List<PlayerOccupations> unlockedOccupations = new ArrayList<PlayerOccupations>();
 	private Guild guild = null;
 	private PlayerStats stats = new PlayerStats(this);
-	private int baseExperience = 0;
+	private int baseExperienceLevel = 0;
+	private float baseExperience = 0;
 	
 	private boolean useCustomExperience = false;
 
@@ -110,8 +113,10 @@ public class RpgPlayer {
 		if(commitToDatabase){
 			RpgPlayerManager.commitOccupationAction(this, OccupationAction.SWITCH, occupation);
 			updateStats();
+			updateSidebar();
 		}
 		updateDescription();
+		updateExperienceBar();
 		
 		DebugUtils.sendDebugMessage(hp.getName() + " set occupation to " + occupation.toString(), DebugMode.INFO);
 	}
@@ -162,22 +167,28 @@ public class RpgPlayer {
 		return stats;
 	}
 	
-	public void swapExperienceBar(){
+	public void swapExperienceBar(boolean custom){
+		if(custom == useCustomExperience) return;
 		
 		Player p = hp.getPlayer();
+		p.sendMessage("Use custom: " + custom);
+		
+		useCustomExperience = custom;
 		
 		if(useCustomExperience){
-			useCustomExperience = false;
-			
-			//Switch to base
-			p.setTotalExperience(baseExperience);
-			
-		}else{
-			useCustomExperience = true;
 			
 			//Switch to custom			
-			baseExperience = p.getTotalExperience();
+			baseExperienceLevel = p.getLevel();
+			baseExperience = p.getExp();
+			
 			updateExperienceBar();
+		}else{
+			
+			//Switch to base
+			p.setLevel(baseExperienceLevel);
+			p.setExp(baseExperience);
+			
+			p.sendMessage("Level: " + baseExperienceLevel + ", exp: " + baseExperience);
 		}
 	}
 	
@@ -187,17 +198,42 @@ public class RpgPlayer {
 		Experience exp = getExperience(getOccupation());
 		Player p = hp.getPlayer();
 		
-		p.sendMessage("Exp: " + ((float)exp.getExperience() / exp.getExpToNextLevel()));
+		p.sendMessage("Level: " + exp.getLevel() + ", Exp: " + ((float)exp.getExperience() / exp.getExpToNextLevel()));
 		
 		p.setLevel(exp.getLevel());
 		p.setExp((float)exp.getExperience() / exp.getExpToNextLevel());
 	}
 
 	public void addBaseExperience(int xp) {
-		baseExperience += xp;
+		swapExperienceBar(false);
+		hp.getPlayer().giveExp(xp / hp.getPlayer().getExpToLevel());
+		swapExperienceBar(true);
+	}
+	
+	public float getBaseExperience(){
+		return baseExperience;
+	}
+	
+	public int getBaseExperienceLevel(){
+		return baseExperienceLevel;
 	}
 	
 	public boolean usingCustomExp(){
 		return useCustomExperience;
+	}
+	
+	public void updateSidebar(){
+		Displayboard board = DisplayboardManager.getScoreboard(hp.getUUID());
+		
+		board.setSidebarLine(3, ""+ ChatColor.GOLD + ChatColor.BOLD + "Occupation:");
+		board.setSidebarLine(4, ""+ ChatColor.ITALIC + getOccupation().getDisplayName());
+	}
+	
+	public void updatePrefix(){
+		if(guild != null){
+			DisplayboardManager.setPrefix(hp.getPlayer(), guild.getTag());
+		}else{
+			DisplayboardManager.setPrefix(hp.getPlayer(), null);
+		}
 	}
 }

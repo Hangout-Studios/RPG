@@ -54,6 +54,7 @@ public class Config {
 			boolean replaceDefault = section.getBoolean("Replace_Default");
 			boolean useEvent = section.getBoolean("Use_Event", false);
 			boolean rightClickEvent = section.getBoolean("Inventory_Click_Event", false);
+			boolean switchEvent = section.getBoolean("Switch_Event", false);
 			boolean dropable = section.getBoolean("Dropable", true);
 			boolean dropOnDeath = section.getBoolean("Drop_On_Death", true);
 			CustomItemRarity rarity = CustomItemRarity.valueOf(section.getString("Rarity", "COMMON"));
@@ -61,9 +62,9 @@ public class Config {
 			ItemStack item = ItemUtils.createItem(mat, displayName, description);
 			
 			if(replaceDefault){
-				CustomItemManager.addDefaultItem(new CustomItem(item, tag, useEvent, rightClickEvent, dropable, dropOnDeath, rarity));
+				CustomItemManager.addDefaultItem(new CustomItem(item, tag, useEvent, rightClickEvent, switchEvent, dropable, dropOnDeath, rarity));
 			}else{
-				CustomItemManager.addItem(new CustomItem(item, tag, useEvent, rightClickEvent, dropable, dropOnDeath, rarity));
+				CustomItemManager.addItem(new CustomItem(item, tag, useEvent, rightClickEvent, switchEvent, dropable, dropOnDeath, rarity));
 			}
 		}
 	}

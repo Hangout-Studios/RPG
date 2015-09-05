@@ -75,6 +75,6 @@ public class Experience {
 	}
 	
 	public int getExpToLevel(int level){
-		return ((level * (level * 2)) * 100);
+		return ((level * (level * 2)) * 150);
 	}
 }

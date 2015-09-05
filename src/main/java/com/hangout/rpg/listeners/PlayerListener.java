@@ -9,9 +9,11 @@ import com.hangout.core.events.PlayerDataReleaseEvent;
 import com.hangout.core.events.PlayerJoinCompleteEvent;
 import com.hangout.core.events.PlayerPostLoadEvent;
 import com.hangout.core.events.PlayerPreSaveEvent;
+import com.hangout.core.events.PlayerQuitCompleteEvent;
 import com.hangout.core.player.CommonPlayerManager;
 import com.hangout.core.utils.mc.DebugUtils;
 import com.hangout.core.utils.mc.DebugUtils.DebugMode;
+import com.hangout.core.utils.scoreboard.DisplayboardManager;
 import com.hangout.rpg.Plugin;
 import com.hangout.rpg.player.RpgPlayer;
 import com.hangout.rpg.player.RpgPlayerManager;
@@ -21,8 +23,14 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinCompleteEvent e){
-		RpgPlayerManager.getPlayer(e.getUUID()).updateStats();
-		RpgPlayerManager.getPlayer(e.getUUID()).swapExperienceBar();
+		RpgPlayer rpgP = RpgPlayerManager.getPlayer(e.getUUID());
+		
+		rpgP.updateStats();
+		rpgP.swapExperienceBar(true);
+		
+		DisplayboardManager.setPrefix(DisplayboardManager.getScoreboard(e.getUUID()));
+		rpgP.updatePrefix();
+		rpgP.updateSidebar();
 	}
 	
 	@EventHandler
@@ -50,7 +58,6 @@ public class PlayerListener implements Listener {
 					p.setRace(PlayerRaces.valueOf((String)e.getProperty("race")));
 				}
 				
-				
 				RpgPlayerManager.loadOccupation(p);
 				RpgPlayerManager.loadExperience(p);
 				
@@ -69,13 +76,17 @@ public class PlayerListener implements Listener {
 	}
 	
 	@EventHandler
+	public void onPlayerQuitComplete(PlayerQuitCompleteEvent e){
+		RpgPlayerManager.getPlayer(e.getUUID()).swapExperienceBar(false);
+	}
+	
+	@EventHandler
 	public void onPlayerExpChange(PlayerExpChangeEvent e) {
 	    int xp = e.getAmount();
 	    RpgPlayer p = RpgPlayerManager.getPlayer(e.getPlayer().getUniqueId());
-	    p.addBaseExperience(xp);
 	    
-	    if(p.usingCustomExp()){
-	    	e.setAmount(0);
-	    }
+	    e.getPlayer().getPlayer().sendMessage("Giving " + xp + " xp");
+	    p.addBaseExperience(xp);
+	    e.setAmount(0);
 	}
 }

@@ -16,14 +16,14 @@ public class InventoryListener implements Listener {
 		if(e.isCancelled()) return;
 		
 		if(e.getInventory() instanceof EnchantingInventory){
-			RpgPlayerManager.getPlayer(e.getPlayer().getUniqueId()).swapExperienceBar();
+			RpgPlayerManager.getPlayer(e.getPlayer().getUniqueId()).swapExperienceBar(false);
 		}
 	}
 	
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onInventoryClose(InventoryCloseEvent e){		
 		if(e.getInventory() instanceof EnchantingInventory){
-			RpgPlayerManager.getPlayer(e.getPlayer().getUniqueId()).swapExperienceBar();
+			RpgPlayerManager.getPlayer(e.getPlayer().getUniqueId()).swapExperienceBar(true);
 		}
 	}
 }
