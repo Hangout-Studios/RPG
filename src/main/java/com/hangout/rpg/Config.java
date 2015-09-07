@@ -62,9 +62,9 @@ public class Config {
 			ItemStack item = ItemUtils.createItem(mat, displayName, description);
 			
 			if(replaceDefault){
-				CustomItemManager.addDefaultItem(new CustomItem(item, tag, useEvent, rightClickEvent, switchEvent, dropable, dropOnDeath, rarity));
+				CustomItemManager.addDefaultItem(new CustomItem(item, tag, useEvent, rightClickEvent, switchEvent, dropable, dropOnDeath, rarity, false));
 			}else{
-				CustomItemManager.addItem(new CustomItem(item, tag, useEvent, rightClickEvent, switchEvent, dropable, dropOnDeath, rarity));
+				CustomItemManager.addItem(new CustomItem(item, tag, useEvent, rightClickEvent, switchEvent, dropable, dropOnDeath, rarity, false));
 			}
 		}
 	}

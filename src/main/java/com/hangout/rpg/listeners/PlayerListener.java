@@ -28,7 +28,7 @@ public class PlayerListener implements Listener {
 		rpgP.updateStats();
 		rpgP.swapExperienceBar(true);
 		
-		DisplayboardManager.setPrefix(DisplayboardManager.getScoreboard(e.getUUID()));
+		DisplayboardManager.setTags(DisplayboardManager.getScoreboard(e.getUUID()));
 		rpgP.updatePrefix();
 		rpgP.updateSidebar();
 	}
@@ -85,7 +85,6 @@ public class PlayerListener implements Listener {
 	    int xp = e.getAmount();
 	    RpgPlayer p = RpgPlayerManager.getPlayer(e.getPlayer().getUniqueId());
 	    
-	    e.getPlayer().getPlayer().sendMessage("Giving " + xp + " xp");
 	    p.addBaseExperience(xp);
 	    e.setAmount(0);
 	}

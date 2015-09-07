@@ -79,7 +79,7 @@ public class GuildManager {
 		
 		//Load all guilds
 		try(PreparedStatement pst = Database.getConnection().prepareStatement(
-				"SELECT max(t_action.action_id) as action_id, t_action.player_member as player_id, v_player.name as player_name, t_action.action as action, " +
+			"SELECT max(t_action.action_id) as action_id, t_action.player_member as player_id, v_player.name as player_name, t_action.action as action, " +
 				"t_action.guild_id as guild_id, v_guild.name as guild_name, v_guild.tag as guild_tag, v_rank.rank_action as rank, " + 
 			    "sum(v_experience.experience) as guild_experience " +
 			"FROM " + Config.databaseName +".guildmember_action t_action " +

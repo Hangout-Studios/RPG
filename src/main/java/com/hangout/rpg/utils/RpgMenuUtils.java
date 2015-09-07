@@ -63,9 +63,7 @@ public class RpgMenuUtils {
 			
 			if(rpgFriend.isInGuild()){
 				MenuUtils.createMenuItem(friendMenu, Material.BANNER, rpgFriend.getGuild().getName(), Arrays.asList("Click to check this guild!"), locationGuild, "guild_menu_open_" + rpgFriend.getGuild().getTag());
-			}
-			
-			if(rpgPlayer.isInGuild()){
+				
 				GuildRank pRank = rpgPlayer.getGuild().getPlayerRank(rpgPlayer);
 				if(rpgFriend.isInGuild()){
 					GuildRank fRank = rpgFriend.getGuild().getPlayerRank(rpgFriend);

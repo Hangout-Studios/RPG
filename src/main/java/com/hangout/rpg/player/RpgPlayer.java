@@ -145,6 +145,7 @@ public class RpgPlayer {
 	
 	public void updateDescription(){
 		List<String> description = new ArrayList<String>();
+		description.add(ChatColor.RED + "Rank: " + ChatColor.WHITE + ChatColor.ITALIC + hp.getHighestRank().getDisplayName());
 		description.add(ChatColor.RED + "Race: " + ChatColor.WHITE + ChatColor.ITALIC + race.getDisplayName());
 		description.add(ChatColor.RED + "Occupation: " + ChatColor.WHITE + ChatColor.ITALIC + occupation.getDisplayName());
 		description.add(ChatColor.RED + "Level: " + ChatColor.WHITE + ChatColor.ITALIC + getExperience(occupation).getLevel());
@@ -171,7 +172,6 @@ public class RpgPlayer {
 		if(custom == useCustomExperience) return;
 		
 		Player p = hp.getPlayer();
-		p.sendMessage("Use custom: " + custom);
 		
 		useCustomExperience = custom;
 		
@@ -187,8 +187,6 @@ public class RpgPlayer {
 			//Switch to base
 			p.setLevel(baseExperienceLevel);
 			p.setExp(baseExperience);
-			
-			p.sendMessage("Level: " + baseExperienceLevel + ", exp: " + baseExperience);
 		}
 	}
 	
@@ -197,8 +195,6 @@ public class RpgPlayer {
 		
 		Experience exp = getExperience(getOccupation());
 		Player p = hp.getPlayer();
-		
-		p.sendMessage("Level: " + exp.getLevel() + ", Exp: " + ((float)exp.getExperience() / exp.getExpToNextLevel()));
 		
 		p.setLevel(exp.getLevel());
 		p.setExp((float)exp.getExperience() / exp.getExpToNextLevel());

@@ -61,7 +61,7 @@ public class Plugin extends JavaPlugin {
 		
 		Database.addCustomPlayerProperty("race", PropertyTypes.STRING);
 		
-		ChatManager.createChannel("guild", "rpg", ChatColor.GREEN + "Guild", Arrays.asList("Only for guild members."), ChatChannelType.SERVER_WIDE, Material.BANNER, true, true);
+		ChatManager.createChannel("rpg", "guild", ChatColor.GREEN + "Guild", Arrays.asList("Only for guild members."), ChatChannelType.SERVER_WIDE, Material.BANNER, true, true);
 	}
 	
 	public void onDisable(){
