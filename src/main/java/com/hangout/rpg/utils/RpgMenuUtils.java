@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import com.hangout.core.menu.MenuInventory;
 import com.hangout.core.menu.MenuUtils;
 import com.hangout.core.player.HangoutPlayer;
+import com.hangout.core.player.PlayerRank;
 import com.hangout.core.utils.mc.ItemUtils;
 import com.hangout.rpg.guild.Guild;
 import com.hangout.rpg.guild.GuildBonusType;
@@ -60,6 +61,8 @@ public class RpgMenuUtils {
 			}else{
 				MenuUtils.createMenuItem(friendMenu, Material.BOOK, "Mute player", Arrays.asList("Click to mute!"), locationMute, "mute_player");
 			}
+			
+			MenuUtils.createMenuItem(friendMenu, Material.POISONOUS_POTATO, "Report player", Arrays.asList("Click to report."), locationMute + 9, "report_player");
 			
 			if(rpgFriend.isInGuild()){
 				MenuUtils.createMenuItem(friendMenu, Material.BANNER, rpgFriend.getGuild().getName(), Arrays.asList("Click to check this guild!"), locationGuild, "guild_menu_open_" + rpgFriend.getGuild().getTag());
@@ -111,9 +114,14 @@ public class RpgMenuUtils {
 			MenuUtils.createMenuItem(friendMenu, Material.WORKBENCH, "Crafting stats", rpgPlayer.getStats().getStats(PlayerStatTypes.CRAFTING), locationOccupations + 10, "stats_crafting");
 		}
 		
-		MenuUtils.createMenuItem(friendMenu, Material.SKULL_ITEM, friend.getDisplayName(), friend.getDescription(), locationProfile, "icon_friend");
+		List<String> friendDescription = new ArrayList<String>(friend.getDescription());
+		if(player.getHighestRank().isRankOrHigher(PlayerRank.ADMIN)){
+			friendDescription.add(" ");
+			friendDescription.add(ChatColor.ITALIC + "Click to change rank.");
+		}
+		MenuUtils.createMenuItem(friendMenu, Material.SKULL_ITEM, friend.getDisplayName(), friendDescription, locationProfile, "icon_friend");
 		
-		MenuUtils.createMenuItem(friendMenu, Material.IRON_HELMET, ChatColor.RED + "Occupation levels", rpgFriend.getOccupationDescriptions(), locationOccupations, "occupations_friend");
+		MenuUtils.createMenuItem(friendMenu, Material.IRON_HELMET, ChatColor.RED + "Occupation levels", rpgFriend.getOccupationDescriptions(), locationOccupations, "occupations_friend");		
 		
 		return friendMenu;
 	}
@@ -189,5 +197,21 @@ public class RpgMenuUtils {
 			}
 		}
 		return boosterMenu;
+	}
+	
+	public static MenuInventory createPlayerRankMenu(HangoutPlayer p, HangoutPlayer otherP){
+		MenuInventory rankMenu = MenuUtils.createMenu("Player Ranks", "rank_" + otherP.getUUID().toString(), p);
+		rankMenu.setTemporary(true);
+		
+		int count = 0;
+		for(PlayerRank r : PlayerRank.values()){
+			//r <= p rank
+			if(!r.isRankOrHigher(p.getHighestRank())){
+				MenuUtils.createMenuItem(rankMenu, Material.APPLE, r.getDisplayName(), Arrays.asList("Set player to this rank."), count, "rank_"+r.toString());
+				count++;
+			}
+		}
+		
+		return rankMenu;
 	}
 }

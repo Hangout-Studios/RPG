@@ -1,7 +1,9 @@
 package com.hangout.rpg;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -50,13 +52,14 @@ public class Config {
 			
 			Material mat = Material.valueOf(section.getString("Material"));
 			String displayName = section.getString("Name", mat.name());
-			List<String> description = section.getStringList("Description");
+			List<String> description = ParseDescriptionList(section.getStringList("Description"));
 			boolean replaceDefault = section.getBoolean("Replace_Default");
 			boolean useEvent = section.getBoolean("Use_Event", false);
 			boolean rightClickEvent = section.getBoolean("Inventory_Click_Event", false);
 			boolean switchEvent = section.getBoolean("Switch_Event", false);
 			boolean dropable = section.getBoolean("Dropable", true);
 			boolean dropOnDeath = section.getBoolean("Drop_On_Death", true);
+			
 			CustomItemRarity rarity = CustomItemRarity.valueOf(section.getString("Rarity", "COMMON"));
 			
 			ItemStack item = ItemUtils.createItem(mat, displayName, description);
@@ -67,5 +70,13 @@ public class Config {
 				CustomItemManager.addItem(new CustomItem(item, tag, useEvent, rightClickEvent, switchEvent, dropable, dropOnDeath, rarity, false));
 			}
 		}
+	}
+	
+	private static List<String> ParseDescriptionList(List<String> l){
+		List<String> rl = new ArrayList<String>();
+		for(String s : l){
+			rl.add(""+ ChatColor.GRAY + ChatColor.ITALIC + s);
+		}
+		return rl;
 	}
 }

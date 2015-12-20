@@ -262,12 +262,12 @@ Experience_Table:
   - "WOLF=8"
   - "ZOMBIE=12"
 Custom_Items:
-#	JUNK(ChatColor.GRAY),
-#	COMMON(ChatColor.WHITE),
-#	UNCOMMON(ChatColor.GREEN),
-#	RARE(ChatColor.BLUE),
-#	MYTHIC(ChatColor.DARK_PURPLE),
-#	LEGENDARY(ChatColor.GOLD);
+# JUNK(ChatColor.GRAY),
+# COMMON(ChatColor.WHITE),
+# UNCOMMON(ChatColor.GREEN),
+# RARE(ChatColor.BLUE),
+# MYTHIC(ChatColor.DARK_PURPLE),
+# LEGENDARY(ChatColor.GOLD);
   acacia_door_item:
     Material: 'ACACIA_DOOR_ITEM'
     Name: 'Acacia door'
@@ -276,7 +276,7 @@ Custom_Items:
     - "Opens with a nice squeek."
     Replace_Default: true
   acacia_fence:
-    Material: 'DIRT'
+    Material: 'ACACIA_FENCE'
     Name: 'Acacia fence'
     Description:
     - "Fence made from Acacia."
@@ -303,6 +303,7 @@ Custom_Items:
     - "varying effecs depending on"
     - "the minecart that activates it."
     Replace_Default: true
+    Rarity: 'RARE'
   anvil:
     Material: 'ANVIL'
     Name: 'Standard Anvil'
@@ -311,6 +312,7 @@ Custom_Items:
     - "blacksmiths to repair"
     - "equipment."
     Replace_Default: true
+    Rarity: 'UNCOMMON'
   apple:
     Material: 'APPLE'
     Name: 'Apple'
@@ -326,6 +328,7 @@ Custom_Items:
     - "Display your past adventures"
     - "on these stands!"
     Replace_Default: true
+    Rarity: 'UNCOMMON'
   arrow:
     Material: 'ARROW'
     Name: 'Iron Arrow'
@@ -334,6 +337,7 @@ Custom_Items:
     - "and used by archers around"
     - "the world."
     Replace_Default: true
+    Rarity: LEGENDARY
   baked_potato:
     Material: 'BAKED_POTATO'
     Name: 'Baked Potato'
@@ -350,6 +354,7 @@ Custom_Items:
     - "Show your affiliation from"
     - "afar with these huge banners."
     Replace_Default: true
+    Rarity: 'UNCOMMON'
   beacon:
     Material: 'BEACON'
     Name: 'Beacon'
@@ -358,6 +363,7 @@ Custom_Items:
     - "can be found from anywhere"
     - "with a clear sky."
     Replace_Default: true
+    Rarity: 'RAE'
   bed:
     Material: 'BED'
     Name: 'Simple Bed'
@@ -366,15 +372,184 @@ Custom_Items:
     - "Doesn't work as trampoline,"
     - "sadly enough..."
     Replace_Default: true
+    Rarity: 'UNCOMMON'
   birch_door_item:
     Material: 'BIRCH_DOOR_ITEM'
     Name: 'Birch Door'
     Description:
-    - "Also known as jacket potato,"
-    - "these potatoes are baked"
-    - "which makes them fluffy on the"
-    - "inside and crispy on the outside."
+    - "A door made from Birch."
+    - "Opens with a nice squeek."
     Replace_Default: true
+  birch_fence:
+    Material: 'BIRCH_FENCE'
+    Name: 'Birch Fence'
+    Description:
+    - "Fence made from Birch."
+    Replace_Default: true
+  birch_fence_gate:
+    Material: 'ACACIA_FENCE_GATE'
+    Name: 'Acacia Fence Gate'
+    Description:
+    - "A Birch gate that fits"
+    - "nicely inbetween fence."
+    Replace_Default: true
+  birch_wood_stairs:
+    Material: 'BIRCH_WOOD_STAIRS'
+    Name: 'Birch Stairs'
+    Description:
+    - "Wooden stairs made from"
+    - "Birch planks."
+    Replace_Default: true
+  blaze_powder:
+    Material: 'BLAZE_POWDER'
+    Name: 'Blaze Powder'
+    Description:
+    - "The remains of a blaze"
+    - "rod. Seemingly floating"
+    - "away by the heat it"
+    - "still generates."
+    Replace_Default: true
+    Rarity: 'RARE'
+  blaze_rod:
+    Material: 'BLAZE_ROD'
+    Name: 'Blaze Rod'
+    Description:
+    - "One of the many rods"
+    - "floating around a blaze."
+    - "Generates blazing heat."
+    Replace_Default: true
+    Rarity: 'RARE'
+  boat:
+    Material: 'BOAT'
+    Name: 'Boat'
+    Description:
+    - "It's like walking on water!"
+    - "Except not as cool..."
+    Replace_Default: true
+  bone:
+    Material: 'BONE'
+    Name: 'Bone'
+    Description:
+    - "Who knows from what creature"
+    - "this originally was?"
+    - "Very tasty for dogs, nonetheless."
+    Replace_Default: true
+  book:
+    Material: 'BOOK'
+    Name: 'Book'
+    Description:
+    - "An empty book."
+    - "Not very useful as of now..."
+    Replace_Default: true
+  book_and_quill:
+    Material: 'BOOK_AND_QUILL'
+    Name: 'Book and Quill'
+    Description:
+    - "This one has a quill!"
+    - "Now go and write the next"
+    - "hit. What about this:"
+    - "50 Shades of Blocks?"
+    Replace_Default: true
+    Rarity: 'UNCOMMON'
+  bookshelf:
+    Material: 'BOOKSHELF'
+    Name: 'Bookshelf'
+    Description:
+    - "Let's see..."
+    - "Game of Blocks,"
+    - "Nether Star Wars,"
+    - "Attack On Endermen and"
+    - "... Ah, who cares?"
+    Replace_Default: true
+    Rarity: 'UNCOMMON'
+  bow:
+    Material: 'BOW'
+    Name: 'Oak Bow'
+    Description:
+    - "Nothing special, but"
+    - "it serves it purpose."
+    Replace_Default: true
+  bread:
+    Material: 'BREAD'
+    Name: 'Bread'
+    Description:
+    - "One of the many rods"
+    - "floating around a blaze."
+    - "Generates blazing heat."
+    Replace_Default: true
+  brick:
+    Material: 'BRICK'
+    Name: 'Brick'
+    Description:
+    - "Very brittle, yet very"
+    - "versatile in uses."
+    - "Has a unique red color to it."
+    Replace_Default: true
+    Rarity: 'UNCOMMON'
+  brick_stairs:
+    Material: 'BRICK_STAIRS'
+    Name: 'Brick Stairs'
+    Description:
+    - "Stairs made from bricks."
+    - "Has the unique pattern seen"
+    - "in all brick materials."
+    Replace_Default: true
+  brown_mushroom:
+    Material: 'BROWN_MUSHROOM'
+    Name: 'Brown Mushroom'
+    Description:
+    - "Grows in dark places deep down."
+    - "Can be used a variety of ways."
+    Replace_Default: true
+  bucket:
+    Material: 'BUCKET'
+    Name: 'Iron Bucket'
+    Description:
+    - "An iron bucket that somehow"
+    - "doesn't smelt when filled"
+    - "with lava..."
+    Replace_Default: true
+  cactus:
+    Material: 'CACTUS'
+    Name: 'Cactus'
+    Description:
+    - "Ouch! Be careful or it"
+    - "sticks right in your finger!"
+    Replace_Default: true
+  cake:
+    Material: 'CAKE'
+    Name: 'Cake'
+    Description:
+    - "No longer a lie."
+    - "It's so delicious and moist!"
+    Replace_Default: true
+    Rarity: 'UNCOMMON'
+  carrot_item:
+    Material: 'CARROT_ITEM'
+    Name: 'Carrot'
+    Description:
+    - "Said to be good for your eyes."
+    - "Why did he need a doc anyway?"
+    Replace_Default: true
+    Rarity: 'UNCOMMON'
+  carrot_stick:
+    Material: 'CARROT_STICK'
+    Name: 'Carrot Stick'
+    Description:
+    - "Go forth, my pink steed!"
+    - "- Sir Steveworth's last words"
+    - "as he jumped off the cliff."
+    Replace_Default: true
+    Rarity: 'UNCOMMON'
+  cauldron_item:
+    Material: 'CAULDRON_ITEM'
+    Name: 'Cauldron'
+    Description:
+    - "Some dirt, some grass,"
+    - "random plants, and you have"
+    - "the perfect stew!"
+    Replace_Default: true
+    Rarity: 'RARE'
   dirt:
     Material: 'DIRT'
     Name: 'Dirt'
@@ -383,3 +558,4 @@ Custom_Items:
     - "the world, like under"
     - "your boot!"
     Replace_Default: true
+    Rarity: 'JUNK'

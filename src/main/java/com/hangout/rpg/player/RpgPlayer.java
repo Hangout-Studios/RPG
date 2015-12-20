@@ -23,7 +23,7 @@ public class RpgPlayer {
 	
 	private HangoutPlayer hp;
 	private HashMap<PlayerOccupations, Experience> experience = new HashMap<PlayerOccupations, Experience>();
-	private PlayerRaces race = PlayerRaces.ELF;
+	private PlayerRaces race = PlayerRaces.HUMAN;
 	private PlayerOccupations occupation = PlayerOccupations.WARRIOR;
 	private List<PlayerOccupations> unlockedOccupations = new ArrayList<PlayerOccupations>();
 	private Guild guild = null;
@@ -77,7 +77,7 @@ public class RpgPlayer {
 	}
 	
 	public void setRace(PlayerRaces race){
-		this.race = race;
+		this.race = race;		
 		updateDescription();
 	}
 	

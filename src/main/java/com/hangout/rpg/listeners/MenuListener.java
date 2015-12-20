@@ -10,12 +10,14 @@ import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import com.hangout.core.chat.ChatManager;
 import com.hangout.core.events.MenuCreateEvent;
 import com.hangout.core.events.MenuItemClickEvent;
 import com.hangout.core.menu.MenuInventory;
 import com.hangout.core.menu.MenuUtils;
 import com.hangout.core.player.HangoutPlayer;
 import com.hangout.core.player.HangoutPlayerManager;
+import com.hangout.core.player.PlayerRank;
 import com.hangout.core.utils.mc.CommandPreparer;
 import com.hangout.rpg.guild.Guild;
 import com.hangout.rpg.guild.GuildBonusType;
@@ -82,6 +84,17 @@ public class MenuListener implements Listener {
 			return;
 		}
 		
+		if(itemTag.equals("report_player")){
+			UUID friendID = UUID.fromString(e.getPlayer().getOpenMenu().getTag().split("_")[0]);
+			e.getPlayer().getPlayer().closeInventory();
+			
+			CommandPreparer c = e.getPlayer().createCommandPreparer("report_player", true);
+			c.append("report player " + HangoutPlayerManager.getPlayer(friendID).getName());
+			
+			e.getPlayer().getPlayer().sendMessage(ChatColor.ITALIC + "Please write your explaination of the report in chat.");
+			return;
+		}
+		
 		if(itemTag.equals("guild_remove_player")){
 			UUID friendID = UUID.fromString(e.getPlayer().getOpenMenu().getTag().split("_")[0]);
 			RpgPlayer rpgFriend = RpgPlayerManager.getPlayer(friendID);
@@ -118,13 +131,13 @@ public class MenuListener implements Listener {
 			RpgPlayer rpgFriend = RpgPlayerManager.getPlayer(friendID);
 			RpgPlayer rpgPlayer = RpgPlayerManager.getPlayer(e.getPlayer().getUUID());
 			
-			CommandPreparer commandAccept = rpgFriend.getHangoutPlayer().createCommandPreparer("guild_accept");
+			CommandPreparer commandAccept = rpgFriend.getHangoutPlayer().createCommandPreparer("guild_accept", false);
 			commandAccept.append("guild");
 			commandAccept.append("accept");
 			commandAccept.append(""+rpgPlayer.getGuild().getID());
 			commandAccept.append(rpgPlayer.getHangoutPlayer().getUUID().toString());
 			
-			CommandPreparer command = rpgFriend.getHangoutPlayer().createCommandPreparer("guild_decline");
+			CommandPreparer command = rpgFriend.getHangoutPlayer().createCommandPreparer("guild_decline", false);
 			command.append("guild");
 			command.append("decline");
 			command.append(""+rpgPlayer.getGuild().getID());
@@ -155,6 +168,7 @@ public class MenuListener implements Listener {
 			RpgPlayer rpgPlayer = RpgPlayerManager.getPlayer(e.getPlayer().getUUID());
 			Guild g = rpgPlayer.getGuild();
 			RpgMenuUtils.createGuildBoostersMenu(e.getPlayer(), g).openMenu(e.getPlayer(), true);
+			return;
 		}
 		
 		//guild_booster_activate_name
@@ -168,10 +182,12 @@ public class MenuListener implements Listener {
 			if(action.equals("buy")){
 				if(g.buyBonus(type, p)){
 					RpgMenuUtils.createGuildBoostersMenu(e.getPlayer(), g).openMenu(e.getPlayer(), false);
+					return;
 				}
 			}else if(action.equals("activate")){
 				if(g.activateBonus(type, p)){
 					RpgMenuUtils.createGuildBoostersMenu(e.getPlayer(), g).openMenu(e.getPlayer(), false);
+					return;
 				}
 			}
 		}
@@ -195,6 +211,23 @@ public class MenuListener implements Listener {
 			HangoutPlayer p = HangoutPlayerManager.getPlayer(UUID.fromString(itemTag.split("_")[1]));
 			RpgMenuUtils.createPlayerMenu(e.getPlayer(), p).openMenu(e.getPlayer(), true);
 			return;
+		}
+		
+		if(itemTag.equals("icon_friend") && e.getPlayer().getHighestRank().isRankOrHigher(PlayerRank.ADMIN)){
+			HangoutPlayer p = HangoutPlayerManager.getPlayer(UUID.fromString(e.getPlayer().getOpenMenu().getTag().split("_")[0]));
+			RpgMenuUtils.createPlayerRankMenu(e.getPlayer(), p).openMenu(e.getPlayer(), true);
+			return;
+		}
+		
+		if(itemTag.startsWith("rank_")){
+			PlayerRank r = PlayerRank.valueOf(itemTag.split("_")[1]);
+			HangoutPlayer p = HangoutPlayerManager.getPlayer(UUID.fromString(e.getPlayer().getOpenMenu().getTag().split("_")[1]));
+			p.addRank(r, true);
+			
+			p.getPlayer().sendMessage(""+ ChatColor.GREEN + ChatColor.BOLD + "Your rank has been set to " + r.getDisplayName());
+			e.getPlayer().getPlayer().sendMessage(""+ ChatColor.GREEN + ChatColor.BOLD + "Your have set " + p.getName() + "'s rank to " + r.getDisplayName());
+			
+			RpgMenuUtils.createPlayerRankMenu(e.getPlayer(), p).openMenu(e.getPlayer(), true);
 		}
 	}
 }
